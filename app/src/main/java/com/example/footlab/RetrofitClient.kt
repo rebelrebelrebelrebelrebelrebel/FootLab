@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "http://192.168.100.160:5000" // Your Flask server URL
+    private const val BASE_URL =  "http://192.168.100.176:5000" // Your Flask server URL
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY

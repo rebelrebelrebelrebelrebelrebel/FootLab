@@ -7,6 +7,6 @@ data class ImageRequest(val imageUrl: String)
 
 // Interfaz para la API
 interface ApiService {
-    @POST("/clasificar") // Cambia el endpoint según tu API
-    fun classifyImage(@Body request: ImageRequest): Call<String> // Aquí puedes cambiar String por una clase si tu respuesta es más compleja
+    @POST("/clasificar") // Change the endpoint to match your Flask API
+    fun classifyImage(@Body request: ImageRequest): Call<String> // Adjust the response type as needed
 }

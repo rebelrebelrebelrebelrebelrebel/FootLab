@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,14 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.storage.FirebaseStorage
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONObject
 import org.tensorflow.lite.Interpreter
 import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
@@ -22,8 +31,6 @@ import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.concurrent.thread
-import okhttp3.MediaType.Companion.toMediaType
-
 
 class FotosAdapter(
     private val context: Context,
@@ -31,6 +38,8 @@ class FotosAdapter(
     private val interpreter: Interpreter,
     private val onClasificarClick: (String) -> Unit // Callback para el botón de clasificar
 ) : RecyclerView.Adapter<FotosAdapter.FotosViewHolder>() {
+
+    private var currentImageUrl: String? = null // Variable para guardar la URL de la imagen
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FotosViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_foto, parent, false)
@@ -43,25 +52,70 @@ class FotosAdapter(
             .load(url)
             .into(holder.imagenFotoItem)
 
+        // Save the URL for later use
+        currentImageUrl = url
+
         // Listener para el botón de clasificar
         holder.botonClasificarItem.setOnClickListener {
-            onClasificarClick(url) // Llama al callback con la URL de la foto
+            Log.d("ClasificarClick", "Fetching image URL...")
+
+            // Fetch the image from Firebase Storage in a background thread
+            thread {
+                val bitmap = loadBitmapFromURL(currentImageUrl ?: "")
+                if (bitmap != null) {
+                    currentImageUrl?.let { url ->
+                        // Create a JSON object with the correct key
+                        val json = JSONObject()
+                        json.put("image_url", url) // Use "image_url" instead of "imageUrl"
+                        val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+
+                        // Make the POST request to the Flask server
+                        val request = Request.Builder()
+                            .url("http://192.168.100.176:5000/clasificar")
+                            .post(requestBody)
+                            .build()
+
+                        // Use OkHttpClient for the request
+                        val client = OkHttpClient()
+                        client.newCall(request).enqueue(object : Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                Log.e("ClasificarError", e.message ?: "Unknown error")
+                            }
+
+                            override fun onResponse(call: Call, response: Response) {
+                                if (response.isSuccessful) {
+                                    // Handle the successful response here
+                                } else {
+                                    Log.e("ClasificarError", "Response Code: ${response.code}")
+                                }
+                            }
+                        })
+                    }
+                } else {
+                    Log.e("ClasificarClick", "Failed to load image from URL")
+                }
+            }
         }
 
-        // Listener para el botón de segmentar
         holder.botonSegmentarItem.setOnClickListener {
+            Log.d("SegmentarClick", "URL: $currentImageUrl")  // Log the URL for the Segmentar button
             thread {
-                val bitmap = loadBitmapFromURL(url)
-                bitmap?.let {
-                    val targetSize = Pair(224, 224)
-                    val (maskImage, segmentedImage) = predictMask(bitmap, targetSize)
+                currentImageUrl?.let { url ->
+                    val bitmap = loadBitmapFromURL(url) // Load original image
+                    bitmap?.let {
+                        val targetSize = Pair(224, 224)
+                        val (maskImage, segmentedImage) = predictMask(bitmap, targetSize)
 
-                    saveBitmapAndGetUrl(maskImage) { maskImageUrl ->
-                        saveBitmapAndGetUrl(segmentedImage) { segmentedImageUrl ->
-                            val intent = Intent(context, ResultsActivity::class.java)
-                            intent.putExtra("MASK_IMAGE_URL", maskImageUrl)
-                            intent.putExtra("SEGMENTED_IMAGE_URL", segmentedImageUrl)
-                            context.startActivity(intent)
+                        saveBitmapAndGetUrl(maskImage) { maskImageUrl ->
+                            saveBitmapAndGetUrl(segmentedImage) { segmentedImageUrl ->
+                                val intent = Intent(context, ResultsActivity::class.java)
+                                intent.putExtra("MASK_IMAGE_URL", maskImageUrl)
+                                intent.putExtra("SEGMENTED_IMAGE_URL", segmentedImageUrl)
+                                context.startActivity(intent)
+
+                                // Use the same currentImageUrl for classification
+                                currentImageUrl?.let { onClasificarClick(it) } // Pass the original image URL to classify
+                            }
                         }
                     }
                 }
@@ -129,9 +183,9 @@ class FotosAdapter(
             .addOnSuccessListener {
                 imageRef.downloadUrl
                     .addOnSuccessListener { uri -> callback(uri.toString()) }
-                    .addOnFailureListener { callback("") } // Manejar error de descarga de URL
+                    .addOnFailureListener { callback("") } // Handle download URL error
             }
-            .addOnFailureListener { callback("") } // Manejar error de subida de imagen
+            .addOnFailureListener { callback("") } // Handle image upload error
     }
 
     class FotosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
