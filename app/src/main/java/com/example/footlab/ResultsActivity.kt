@@ -2,6 +2,7 @@ package com.example.footlab
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.os.Bundle
 import android.widget.ImageView
@@ -30,11 +31,19 @@ class ResultsActivity : AppCompatActivity() {
 
         val maskImageView = findViewById<ImageView>(R.id.maskImageView)
         val segmentedImageView = findViewById<ImageView>(R.id.segmentedImageView)
+        val classificationImageView = findViewById<ImageView>(R.id.classificationImageView) // Nuevo ImageView para la clasificación
 
         val maskImageUrl = intent.getStringExtra("MASK_IMAGE_URL")
         val segmentedImageUrl = intent.getStringExtra("SEGMENTED_IMAGE_URL")
 
-        // Load images asynchronously using Glide
+        // Recibir el Bitmap de la clasificación
+        val classificationImageByteArray = intent.getByteArrayExtra("PREDICTIONS_IMAGE")
+        if (classificationImageByteArray != null) {
+            val classificationBitmap = BitmapFactory.decodeByteArray(classificationImageByteArray, 0, classificationImageByteArray.size)
+            classificationImageView.setImageBitmap(classificationBitmap) // Mostrar la imagen de clasificación
+        }
+
+        // Cargar imágenes de máscara y segmentadas
         maskImageUrl?.let { url ->
             loadImage(url, maskImageView)
         }
@@ -43,7 +52,7 @@ class ResultsActivity : AppCompatActivity() {
             loadImage(url, segmentedImageView)
         }
 
-        // Combine images and upload if both URLs are provided
+        // Combinar imágenes y subir si ambas URLs están disponibles
         if (maskImageUrl != null && segmentedImageUrl != null) {
             loadImage(maskImageUrl) { maskBitmap ->
                 loadImage(segmentedImageUrl) { segmentedBitmap ->
