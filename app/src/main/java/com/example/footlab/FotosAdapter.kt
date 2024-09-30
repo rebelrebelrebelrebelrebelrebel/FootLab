@@ -40,8 +40,6 @@ class FotosAdapter(
     private val onClasificarClick: (String) -> Unit
 ) : RecyclerView.Adapter<FotosAdapter.FotosViewHolder>() {
 
-    private var currentImageUrl: String? = null
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FotosViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_foto, parent, false)
         return FotosViewHolder(view)
@@ -49,18 +47,19 @@ class FotosAdapter(
 
     override fun onBindViewHolder(holder: FotosViewHolder, position: Int) {
         val url = fotosUrls[position]
-        currentImageUrl = url
 
         Glide.with(context)
             .load(url)
             .into(holder.imagenFotoItem)
 
         holder.botonClasificarItem.setOnClickListener {
-            classifyImage(currentImageUrl)
+            // Agregar un log para visualizar la URL de la imagen
+            Log.d("ClasificarImageURL", "Clasificando imagen con URL: $url")
+            classifyImage(url) // Usa el url directamente
         }
 
         holder.botonSegmentarItem.setOnClickListener {
-            segmentImage(currentImageUrl)
+            segmentImage(url) // Usa el url directamente
         }
     }
 
@@ -140,8 +139,6 @@ class FotosAdapter(
                         intent.putExtra("MASK_IMAGE_URL", maskImageUrl)
                         intent.putExtra("SEGMENTED_IMAGE_URL", segmentedImageUrl)
                         context.startActivity(intent)
-
-                        currentImageUrl?.let { onClasificarClick(it) }
                     }
                 }
             } ?: Log.e("SegmentarError", "Failed to load image for segmentation")
