@@ -48,12 +48,13 @@ class FotosAdapter(
     override fun onBindViewHolder(holder: FotosViewHolder, position: Int) {
         val url = fotosUrls[position]
 
+        // Cargar la imagen con Glide
         Glide.with(context)
             .load(url)
             .into(holder.imagenFotoItem)
 
+        // Asignar eventos a los botones
         holder.botonClasificarItem.setOnClickListener {
-            // Agregar un log para visualizar la URL de la imagen
             Log.d("ClasificarImageURL", "Clasificando imagen con URL: $url")
             classifyImage(url) // Usa el url directamente
         }
@@ -73,12 +74,13 @@ class FotosAdapter(
         }
 
         thread {
-            val json = JSONObject()
-            json.put("image_url", imageUrl)
+            val json = JSONObject().apply {
+                put("image_url", imageUrl)
+            }
 
             val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
             val request = Request.Builder()
-                .url("https://b1f9-2806-2f0-92c0-6a47-1d4-d954-e46b-565b.ngrok-free.app/clasificar")
+                .url("https://1688-2806-2f0-92c0-6a47-2de3-c3c4-b737-b2b1.ngrok-free.app/clasificar")
                 .post(requestBody)
                 .build()
 
@@ -106,13 +108,12 @@ class FotosAdapter(
         response.body?.string()?.let { responseBody ->
             val jsonResponse = JSONObject(responseBody)
             if (jsonResponse.has("predictions_image")) {
-                // Get the Base64 string directly from the response
                 val predictionsImageBase64 = jsonResponse.getString("predictions_image")
                 Log.d("ClasificarResult", "Predictions Image Base64: $predictionsImageBase64")
 
-                // Iniciar ClassificationActivity con la cadena Base64
-                val intent = Intent(context, ClassificationActivity::class.java)
-                intent.putExtra("BASE64_IMAGE", predictionsImageBase64)
+                val intent = Intent(context, ClassificationActivity::class.java).apply {
+                    putExtra("BASE64_IMAGE", predictionsImageBase64)
+                }
                 context.startActivity(intent)
             } else {
                 Log.e("ClasificarError", "No se encontró 'predictions_image' en la respuesta")
@@ -135,9 +136,10 @@ class FotosAdapter(
 
                 saveBitmapAndGetUrl(maskImage) { maskImageUrl ->
                     saveBitmapAndGetUrl(segmentedImage) { segmentedImageUrl ->
-                        val intent = Intent(context, ResultsActivity::class.java)
-                        intent.putExtra("MASK_IMAGE_URL", maskImageUrl)
-                        intent.putExtra("SEGMENTED_IMAGE_URL", segmentedImageUrl)
+                        val intent = Intent(context, ResultsActivity::class.java).apply {
+                            putExtra("MASK_IMAGE_URL", maskImageUrl)
+                            putExtra("SEGMENTED_IMAGE_URL", segmentedImageUrl)
+                        }
                         context.startActivity(intent)
                     }
                 }
@@ -162,8 +164,9 @@ class FotosAdapter(
     // Predecir máscara y segmentar la imagen
     private fun predictMask(bitmap: Bitmap, targetSize: Pair<Int, Int>): Pair<Bitmap, Bitmap> {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetSize.first, targetSize.second, true)
-        val inputBuffer = ByteBuffer.allocateDirect(4 * targetSize.first * targetSize.second * 3)
-        inputBuffer.order(ByteOrder.nativeOrder())
+        val inputBuffer = ByteBuffer.allocateDirect(4 * targetSize.first * targetSize.second * 3).apply {
+            order(ByteOrder.nativeOrder())
+        }
 
         val intValues = IntArray(targetSize.first * targetSize.second)
         resizedBitmap.getPixels(intValues, 0, targetSize.first, 0, 0, targetSize.first, targetSize.second)
@@ -173,8 +176,9 @@ class FotosAdapter(
             inputBuffer.putFloat((pixelValue and 0xFF) / 255.0f)
         }
 
-        val outputBuffer = ByteBuffer.allocateDirect(4 * targetSize.first * targetSize.second)
-        outputBuffer.order(ByteOrder.nativeOrder())
+        val outputBuffer = ByteBuffer.allocateDirect(4 * targetSize.first * targetSize.second).apply {
+            order(ByteOrder.nativeOrder())
+        }
         interpreter.run(inputBuffer, outputBuffer)
 
         return generateResultBitmaps(outputBuffer, resizedBitmap, targetSize)

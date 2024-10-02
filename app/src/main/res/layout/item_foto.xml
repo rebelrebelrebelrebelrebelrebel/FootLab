@@ -48,7 +48,7 @@
                 android:layout_height="39dp"
                 android:layout_marginBottom="8dp"
                 android:background="@color/purple_700"
-                android:text="@string/clasificar"
+                android:text="@string/analizar"
                 android:textColor="#000000" />
 
             <Button

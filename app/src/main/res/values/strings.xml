@@ -11,5 +11,8 @@
     <string name="segmentar">Segmentar</string>
     <string name="original_image_description">Original Image</string>
     <string name="classified_image_description">Classified Image\n</string>
+    <string name="analizar">Analizar</string>
+    <string name="navigation_drawer_open">Abrir menú\n\n</string>
+    <string name="navigation_drawer_close">Cerrar menú</string>
 
 </resources>

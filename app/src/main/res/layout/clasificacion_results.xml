@@ -1,13 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F0F0"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".ClassificationResultsActivity">
 
-    <ImageView
-        android:id="@+id/classificationImageView"
+    <!-- Title TextView -->
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"/>
-</RelativeLayout>
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Clasificación de tejidos"
+        android:textColor="@color/purple_700"
+        android:textSize="30sp"
+        android:textStyle="bold"/>
+
+    <!-- ImageView -->
+    <ImageView
+        android:id="@+id/classificationImageView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/rounded_image_background"
+        android:padding="8dp"
+        android:elevation="8dp" />
+
+    <!-- Legend TextView -->
+    <TextView
+        android:id="@+id/legendTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Los tejidos han sido clasificados de la siguiente manera: rojo para epitelial, amarillo para esfacelar, y azul marino para necrosado."
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp"/>
+
+    <!-- TextView for displaying classification results -->
+    <TextView
+        android:id="@+id/classificationResultsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resultados de Clasificación"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Porcentaje de rojo -->
+    <TextView
+        android:id="@+id/porcentajeRojoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Porcentaje de Rojo: "
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Porcentaje de amarillo -->
+    <TextView
+        android:id="@+id/porcentajeAmarilloTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Porcentaje de Amarillo: "
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Porcentaje de azul -->
+    <TextView
+        android:id="@+id/porcentajeAzulTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Porcentaje de Azul: "
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>
