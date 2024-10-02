@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -48,25 +49,21 @@ class FotosAdapter(
     override fun onBindViewHolder(holder: FotosViewHolder, position: Int) {
         val url = fotosUrls[position]
 
-        // Cargar la imagen con Glide
+        // Load the image using Glide
         Glide.with(context)
             .load(url)
             .into(holder.imagenFotoItem)
 
-        // Asignar eventos a los botones
+        // Set up button click listeners
         holder.botonClasificarItem.setOnClickListener {
-            Log.d("ClasificarImageURL", "Clasificando imagen con URL: $url")
-            classifyImage(url) // Usa el url directamente
-        }
-
-        holder.botonSegmentarItem.setOnClickListener {
-            segmentImage(url) // Usa el url directamente
+            Log.d("FotosAdapter", "Classifying image with URL: $url")
+            classifyImage(url) // Pass the URL directly
         }
     }
 
     override fun getItemCount(): Int = fotosUrls.size
 
-    // Método para clasificar la imagen
+    // Method for classifying the image
     private fun classifyImage(imageUrl: String?) {
         if (imageUrl.isNullOrEmpty()) {
             showToast("Image URL is empty.")
@@ -80,14 +77,14 @@ class FotosAdapter(
 
             val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
             val request = Request.Builder()
-                .url("https://1688-2806-2f0-92c0-6a47-2de3-c3c4-b737-b2b1.ngrok-free.app/clasificar")
+                .url("https://1688-2806-2f0-92c0-6a47-2de3-c3c4-b737-b2b1.ngrok-free.app/clasificar") // Use your actual URL here
                 .post(requestBody)
                 .build()
 
             val client = OkHttpClient()
             client.newCall(request).enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
-                    Log.e("ClasificarError", e.message ?: "Unknown error")
+                    Log.e("FotosAdapter", "Classification error: ${e.message}")
                     showToast("Failed to classify image.")
                 }
 
@@ -95,7 +92,7 @@ class FotosAdapter(
                     if (response.isSuccessful) {
                         handleClassificationResponse(response)
                     } else {
-                        Log.e("ClasificarError", "Response Code: ${response.code}")
+                        Log.e("FotosAdapter", "Classification failed with code: ${response.code}")
                         showToast("Classification failed with code: ${response.code}")
                     }
                 }
@@ -103,25 +100,39 @@ class FotosAdapter(
         }
     }
 
-    // Maneja la respuesta de clasificación
+    // Handle classification response
     private fun handleClassificationResponse(response: Response) {
         response.body?.string()?.let { responseBody ->
+            Log.d("FotosAdapter", "Response body: $responseBody")
+
             val jsonResponse = JSONObject(responseBody)
+            val yellowPercentage = jsonResponse.optDouble("Porcentaje de amarillo", 0.0)
+            val bluePercentage = jsonResponse.optDouble("Porcentaje de azul", 0.0)
+            val redPercentage = jsonResponse.optDouble("Porcentaje de rojo", 0.0)
+
             if (jsonResponse.has("predictions_image")) {
                 val predictionsImageBase64 = jsonResponse.getString("predictions_image")
-                Log.d("ClasificarResult", "Predictions Image Base64: $predictionsImageBase64")
+                val classificationResultsBundle = Bundle().apply {
+                    putDouble("Porcentaje de amarillo", yellowPercentage)
+                    putDouble("Porcentaje de azul", bluePercentage)
+                    putDouble("Porcentaje de rojo", redPercentage)
+                }
+
+                Log.d("FotosAdapter", "Classification results Bundle: $classificationResultsBundle")
 
                 val intent = Intent(context, ClassificationActivity::class.java).apply {
                     putExtra("BASE64_IMAGE", predictionsImageBase64)
+                    putExtra("CLASSIFICATION_RESULTS", classificationResultsBundle)
                 }
                 context.startActivity(intent)
             } else {
-                Log.e("ClasificarError", "No se encontró 'predictions_image' en la respuesta")
+                Log.e("FotosAdapter", "No 'predictions_image' found in response")
             }
-        }
+        } ?: Log.e("FotosAdapter", "Response body is null")
     }
 
-    // Método para segmentar la imagen
+
+    // Method for segmenting the image
     private fun segmentImage(imageUrl: String?) {
         if (imageUrl.isNullOrEmpty()) {
             showToast("Image URL is empty.")
@@ -143,11 +154,11 @@ class FotosAdapter(
                         context.startActivity(intent)
                     }
                 }
-            } ?: Log.e("SegmentarError", "Failed to load image for segmentation")
+            } ?: Log.e("FotosAdapter", "Failed to load image for segmentation")
         }
     }
 
-    // Cargar Bitmap desde URL
+    // Load Bitmap from URL
     private fun loadBitmapFromURL(url: String): Bitmap? {
         return try {
             val connection = URL(url).openConnection() as HttpURLConnection
@@ -156,12 +167,12 @@ class FotosAdapter(
             val inputStream = connection.inputStream
             BitmapFactory.decodeStream(inputStream)
         } catch (e: IOException) {
-            Log.e("LoadBitmapError", "Error loading bitmap: ${e.message}")
+            Log.e("FotosAdapter", "Error loading bitmap: ${e.message}")
             null
         }
     }
 
-    // Predecir máscara y segmentar la imagen
+    // Predict mask and segment the image
     private fun predictMask(bitmap: Bitmap, targetSize: Pair<Int, Int>): Pair<Bitmap, Bitmap> {
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, targetSize.first, targetSize.second, true)
         val inputBuffer = ByteBuffer.allocateDirect(4 * targetSize.first * targetSize.second * 3).apply {
@@ -184,7 +195,7 @@ class FotosAdapter(
         return generateResultBitmaps(outputBuffer, resizedBitmap, targetSize)
     }
 
-    // Generar Bitmaps de resultados
+    // Generate result Bitmaps
     private fun generateResultBitmaps(outputBuffer: ByteBuffer, resizedBitmap: Bitmap, targetSize: Pair<Int, Int>): Pair<Bitmap, Bitmap> {
         val maskBitmap = Bitmap.createBitmap(targetSize.first, targetSize.second, Bitmap.Config.ARGB_8888)
         val segmentedBitmap = Bitmap.createBitmap(targetSize.first, targetSize.second, Bitmap.Config.ARGB_8888)
@@ -201,7 +212,7 @@ class FotosAdapter(
         return Pair(maskBitmap, segmentedBitmap)
     }
 
-    // Guardar Bitmap en Firebase Storage y obtener la URL
+    // Save Bitmap to Firebase Storage and get the URL
     private fun saveBitmapAndGetUrl(bitmap: Bitmap, callback: (String) -> Unit) {
         val storageRef = FirebaseStorage.getInstance().reference
         val imageRef = storageRef.child("images/${System.currentTimeMillis()}.png")
@@ -218,16 +229,16 @@ class FotosAdapter(
             .addOnFailureListener { callback("") }
     }
 
-    // Mostrar un Toast
+    // Show toast message
     private fun showToast(message: String) {
         (context as? Activity)?.runOnUiThread {
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
     }
 
+    // ViewHolder class for binding views
     inner class FotosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imagenFotoItem: ImageView = itemView.findViewById(R.id.imagenFotoItem)
         val botonClasificarItem: Button = itemView.findViewById(R.id.botonClasificarItem)
-        val botonSegmentarItem: Button = itemView.findViewById(R.id.botonSegmentarItem)
     }
 }

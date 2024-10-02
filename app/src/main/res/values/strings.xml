@@ -14,5 +14,15 @@
     <string name="analizar">Analizar</string>
     <string name="navigation_drawer_open">Abrir menú\n\n</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
-
+    <string name="red_percentage">Porcentaje Epitelial (Rojo): %.2f%%</string>
+    <string name="yellow_percentage">Porcentaje Esfacelar (Amarillo): %.2f%%</string>
+    <string name="blue_percentage">Porcentaje Necrosado (Azul): %.2f%%</string>
+    <string name="classification_results_summary">Resultados de Clasificación</string>
+    <string name="porcentaje_epitelial_rojo">Porcentaje Epitelial (Rojo):</string>
+    <string name="porcentaje_esfacelar_amarillo">Porcentaje Esfacelar (Amarillo):</string>
+    <string name="porcentaje_necrosado_azul">Porcentaje Necrosado (Azul):</string>
+    <string name="resultados_de_clasificaci_n">Resultados de Clasificación</string>
+    <string name="clasificaci_n_de_tejidos">Clasificación de Tejidos</string>
+    <string name="ver_historial_cl_nico">VER HISTORIAL CLÍNICO</string>
+    <string name="ver_resultados">VER RESULTADOS</string> <!-- Optional summary -->
 </resources>
