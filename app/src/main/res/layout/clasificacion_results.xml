@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F0F0F0"
+    android:background="#F8F8F8"
     android:gravity="center"
     android:padding="16dp"
     tools:context=".ClassificationActivity">
@@ -25,11 +25,10 @@
     <!-- ImageView for displaying the classified image -->
     <ImageView
         android:id="@+id/classificationImageView"
-        android:layout_width="310dp"
-        android:layout_height="310dp"
+        android:layout_width="333dp"
+        android:layout_height="330dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/rounded_image_background"
-        android:padding="8dp"
+        android:padding="10dp"
         android:elevation="10dp"/>
 
     <!-- TextView for displaying classification results -->

@@ -1,17 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Ayuda"
-        android:gravity="center"
-        android:textColor="@color/purple_700"
-        android:textSize="36sp"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sección de Ayuda"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:textColor="@color/blueapp"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sigue estos pasos para comenzar:"
+            android:paddingBottom="20dp"
+            android:gravity="center"
+            android:textColor="@color/blueapp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:id="@+id/textViewStep1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Crea un historial clínico en la sección de Historial."
+            android:paddingBottom="10dp"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/textViewStep2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2. Captura una fotografía de tu herida usando la cámara. Asegúrate de que el lugar esté bien iluminado y de que la imagen se tome a una distancia adecuada, lo más cerca posible de la herida."
+            android:paddingBottom="10dp"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/textViewStep3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3. Ve a la galería y selecciona el botón Analizar para procesar la imagen."
+            android:paddingBottom="10dp"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/textViewStep4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="4. La imagen clasificada se guardará en la sección de Resultados de tu historial para que la puedas consultar más tarde."
+            android:paddingBottom="10dp"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginBottom="32dp"/>
+
+    </LinearLayout>
+
+</ScrollView>

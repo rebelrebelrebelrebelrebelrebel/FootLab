@@ -5,12 +5,13 @@
     android:orientation="vertical"
     android:padding="8dp">
 
+    <!-- RecyclerView with bottom padding to prevent overlap with the bottom menu -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewFotos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:paddingBottom="1dp"/> <!-- Adjust this value based on the height of your bottom menu -->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -32,7 +33,6 @@
             android:orientation="vertical"
             android:padding="8dp"
             android:layout_centerVertical="true">
-
 
             <Button
                 android:id="@+id/botonClasificarItem"

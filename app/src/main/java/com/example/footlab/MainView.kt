@@ -8,6 +8,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
@@ -94,12 +95,22 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         }
     }
 
-
-
     private fun openCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as? Bitmap
+            if (imageBitmap != null) {
+                uploadImageToFirebase(imageBitmap)
+            } else {
+                showAlert("Error al obtener la imagen")
+            }
         }
     }
 
@@ -115,27 +126,20 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
             } else {
                 Toast.makeText(
                     this,
-                    "Camera permission is required to use the camera",
+                    "Se requiere permiso de cámara para usar la cámara",
                     Toast.LENGTH_SHORT
                 ).show()
             }
         }
     }
 
-
     private fun showAlert(message: String) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Mensaje")
         builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialog, _ ->
-            dialog.dismiss()
-        }
+        builder.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
         val dialog = builder.create()
         dialog.show()
-    }
-
-    private fun openResultsActivity(bitmap: Bitmap, classifications: Any) {
-        // Implement this method to display the results
     }
 
     private fun uploadImageToFirebase(imageBitmap: Bitmap) {
@@ -150,9 +154,7 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
 
             storageRef.putBytes(data)
                 .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { uri ->
-                        saveImageInfoToFirestore(uri.toString())
-                    }
+                    storageRef.downloadUrl.addOnSuccessListener { uri -> saveImageInfoToFirestore(uri.toString()) }
                 }
                 .addOnFailureListener {
                     showAlert("Error al cargar la imagen")
@@ -183,19 +185,13 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
                             batch.update(docRef, "Fotos", FieldValue.arrayUnion(newPhoto))
                         }
                         batch.commit()
-                            .addOnSuccessListener {
-                                showAlert("Imagen guardada exitosamente")
-                            }
-                            .addOnFailureListener {
-                                showAlert("Error al guardar la imagen")
-                            }
+                            .addOnSuccessListener { showAlert("Imagen guardada exitosamente") }
+                            .addOnFailureListener { showAlert("Error al guardar la imagen") }
                     } else {
                         showAlert("Usuario no encontrado")
                     }
                 }
-                .addOnFailureListener {
-                    showAlert("Error al recuperar el documento")
-                }
+                .addOnFailureListener { showAlert("Error al recuperar el documento") }
         } else {
             showAlert("Usuario no encontrado")
         }
@@ -243,7 +239,16 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
             fragmentTransaction.addToBackStack(null)
         }
         fragmentTransaction.commit()
+
+        // Handle visibility of BottomAppBar, BottomNavigationView, and FAB
+        if (fragment is AnalizarFragment) {
+            binding.bottomAppBar.visibility = View.GONE
+            binding.bottomNavigation.visibility = View.GONE
+            binding.fab.visibility = View.GONE
+        } else {
+            binding.bottomAppBar.visibility = View.VISIBLE
+            binding.bottomNavigation.visibility = View.VISIBLE
+            binding.fab.visibility = View.VISIBLE
+        }
     }
-
-
 }

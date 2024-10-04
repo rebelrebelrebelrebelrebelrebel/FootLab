@@ -19,6 +19,7 @@ class ClassificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.clasificacion_results) // Ensure you have a corresponding layout XML
 
+
         // Initialize UI components
         imageView = findViewById(R.id.classificationImageView) // Updated ID based on your layout
         redPercentageTextView = findViewById(R.id.porcentajeRojoTextView) // Updated ID

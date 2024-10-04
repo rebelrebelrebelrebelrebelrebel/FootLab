@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL =  "https://1688-2806-2f0-92c0-6a47-2de3-c3c4-b737-b2b1.ngrok-free.app" // Your Flask server URL
+    private const val BASE_URL =  "https://7e0e-2806-2f0-92c0-6a47-a8da-3783-a4a-6f58.ngrok-free.app" // Your Flask server URL
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
