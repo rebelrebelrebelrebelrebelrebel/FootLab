@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F8F8"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".ResultadosClasificadosActivity">
+
+    <!-- Title TextView -->
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_marginTop="32dp"
+        android:text=""
+        android:textColor="@color/blueapp"
+        android:textSize="29sp"
+        android:textStyle="bold"/>
+
+    <!-- ImageView for displaying the classified image -->
+    <ImageView
+        android:id="@+id/classificationImageView"
+        android:layout_width="333dp"
+        android:layout_height="330dp"
+        android:scaleType="centerCrop"
+        android:padding="10dp"
+        android:elevation="10dp"/>
+
+    <!-- TextView for displaying classification results -->
+    <TextView
+        android:id="@+id/classificationResultsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/resultados_de_clasificaci_n"
+        android:textColor="@color/blueapp"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold"/>
+
+    <!-- Porcentaje de rojo -->
+    <TextView
+        android:id="@+id/porcentajeRojoTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/porcentaje_epitelial_rojo"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Porcentaje de amarillo -->
+    <TextView
+        android:id="@+id/porcentajeAmarilloTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/porcentaje_esfacelar_amarillo"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Porcentaje de azul -->
+    <TextView
+        android:id="@+id/porcentajeAzulTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/porcentaje_necrosado_azul"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:layout_marginTop="8dp"/>
+
+</LinearLayout>

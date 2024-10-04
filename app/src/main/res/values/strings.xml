@@ -24,5 +24,10 @@
     <string name="resultados_de_clasificaci_n">Resultados de Clasificación</string>
     <string name="clasificaci_n_de_tejidos">Clasificación de Tejidos</string>
     <string name="ver_historial_cl_nico">VER HISTORIAL CLÍNICO</string>
+
+    <string name="porcentaje_epitelial_rojo2">Porcentaje Epitelial Rojo: %.2f%%</string>
+    <string name="porcentaje_esfacelar_amarillo2">Porcentaje Esfacelar Amarillo: %.2f%%</string>
+    <string name="porcentaje_necrosado_azul2">Porcentaje Necrosado Azul: %.2f%%</string>
+
     <string name="ver_resultados">VER RESULTADOS</string> <!-- Optional summary -->
 </resources>

@@ -26,7 +26,7 @@ class HistorialFragment : Fragment() {
 
 
         botonResultados.setOnClickListener {
-
+            openFragment(ResultadosFragment())
         }
 
         return view
