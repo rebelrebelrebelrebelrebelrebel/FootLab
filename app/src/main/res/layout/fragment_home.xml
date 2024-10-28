@@ -6,20 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".HomeFragment">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="252dp"
-        android:layout_height="472dp"
-        android:baselineAlignBottom="false"
-        android:layout_gravity="center"
-        android:src="@drawable/footlabcircle" />
-
-    <TextView
-        android:id="@+id/bienvenida2"
+    <!-- Contenedor para TabLayout y ViewPager2 -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal"
-        android:gravity="center"
-        android:textColor="#26276F"
-        android:textSize="33sp" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- TabLayout para las pestañas de Perfil e Historial clínico -->
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
+            app:tabMode="fixed"
+            app:tabGravity="fill"
+            app:tabTextColor="@color/blueapp"
+            android:backgroundTint="@color/white" />
+
+        <!-- ViewPager2 para el contenido de cada pestaña -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
 </FrameLayout>

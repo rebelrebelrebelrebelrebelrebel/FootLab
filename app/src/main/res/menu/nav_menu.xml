@@ -19,7 +19,7 @@
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/baseline_history_24"
-            android:title="Historial" />
+            android:title="Progreso" />
 
 
         <item

@@ -1,17 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/bienvenida"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:textColor="@color/purple_700"
-        android:textSize="36sp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
 
-</FrameLayout>
+        <!-- Foto de perfil -->
+        <ImageView
+            android:id="@+id/fotoPerfil"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:src="@drawable/foto_perfil"
+            android:contentDescription="Foto de perfil"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Campo Nombre -->
+        <TextView
+            android:id="@+id/textNombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre: Regina Ríos López"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Campo Edad -->
+        <TextView
+            android:id="@+id/textEdad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Edad: 28"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Campo Fecha de Registro -->
+        <TextView
+            android:id="@+id/textFechaRegistro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Fecha de Registro: 01/08/2024"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Campo Médico Tratante -->
+        <TextView
+            android:id="@+id/textMedicoTratante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Médico Tratante: Dr. Pérez"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp" />
+
+        <!-- Campo Diagnóstico -->
+        <TextView
+            android:id="@+id/textDiagnostico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Diagnóstico: Pendiente de actualización"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+</ScrollView>

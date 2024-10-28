@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.footlab.databinding.ActivityMainViewBinding
+import com.example.tuapp.PerfilFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -66,6 +67,7 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
 
         binding.navigationDrawer.setNavigationItemSelectedListener(this)
 
+        // Inicializa la barra de navegación inferior sin HomeFragment
         binding.bottomNavigation.background = null
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
@@ -76,7 +78,7 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         }
 
         fragmentManager = supportFragmentManager
-        openFragment(HomeFragment(), HOME_FRAGMENT_TAG)
+        openFragment(HomeFragment(), HOME_FRAGMENT_TAG) // Carga solo el HomeFragment al inicio
 
         binding.fab.setOnClickListener {
             if (ContextCompat.checkSelfPermission(
@@ -154,7 +156,9 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
 
             storageRef.putBytes(data)
                 .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { uri -> saveImageInfoToFirestore(uri.toString()) }
+                    storageRef.downloadUrl.addOnSuccessListener { uri ->
+                        saveImageInfoToFirestore(uri.toString())
+                    }
                 }
                 .addOnFailureListener {
                     showAlert("Error al cargar la imagen")
@@ -213,10 +217,10 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             val currentFragment = fragmentManager.findFragmentById(R.id.fragment_container)
-            if (currentFragment !is HomeFragment) {
-                openFragment(HomeFragment(), HOME_FRAGMENT_TAG)
+            if (currentFragment is HomeFragment) {
+                super.onBackPressed() // Permitir salir de la app si estamos en HomeFragment
             } else {
-                super.onBackPressed()
+                openFragment(HomeFragment(), HOME_FRAGMENT_TAG) // Regresar a HomeFragment
             }
         }
     }
@@ -235,20 +239,26 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
     private fun openFragment(fragment: Fragment, tag: String? = null) {
         val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, fragment, tag)
-        if (tag == HOME_FRAGMENT_TAG) {
-            fragmentTransaction.addToBackStack(null)
+
+        // Solo agrega a la pila de retroceso si no es el HomeFragment
+        if (tag != HOME_FRAGMENT_TAG) {
+            fragmentTransaction.addToBackStack(tag)
         }
+
         fragmentTransaction.commit()
 
-        // Handle visibility of BottomAppBar, BottomNavigationView, and FAB
-        if (fragment is AnalizarFragment) {
-            binding.bottomAppBar.visibility = View.GONE
-            binding.bottomNavigation.visibility = View.GONE
-            binding.fab.visibility = View.GONE
-        } else {
-            binding.bottomAppBar.visibility = View.VISIBLE
-            binding.bottomNavigation.visibility = View.VISIBLE
-            binding.fab.visibility = View.VISIBLE
+        // Manejo de la visibilidad de BottomAppBar, BottomNavigationView y FAB
+        when (fragment) {
+            is AnalizarFragment, is HomeFragment -> {
+                binding.bottomAppBar.visibility = View.GONE
+                binding.bottomNavigation.visibility = View.GONE
+                binding.fab.visibility = View.GONE
+            }
+            else -> {
+                binding.bottomAppBar.visibility = View.VISIBLE
+                binding.bottomNavigation.visibility = View.VISIBLE
+                binding.fab.visibility = View.VISIBLE
+            }
         }
     }
 }

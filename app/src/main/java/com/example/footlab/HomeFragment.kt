@@ -1,31 +1,48 @@
 package com.example.footlab
 
-import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
-import android.view.*
-import android.widget.TextView
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.example.tuapp.PerfilFragment
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    private lateinit var textBienvenido: TextView
+    private lateinit var tabLayout: TabLayout
+    private lateinit var viewPager: ViewPager2
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_home, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        textBienvenido = view.findViewById(R.id.bienvenida2)
-        val sharedPreferences = requireContext().getSharedPreferences("UserData",
-            Context.MODE_PRIVATE
-        )
-        val nombre = sharedPreferences.getString("Nombre", "Usuario")
+        // Initialize views
+        tabLayout = view.findViewById(R.id.tabLayout)
+        viewPager = view.findViewById(R.id.viewPager)
 
-        // Actualizar el TextView con el mensaje de bienvenida
-        textBienvenido.text = "\nBIENVENID@\n$nombre"
+        // Initialize ViewPager with adapter
+        viewPager.adapter = ViewPagerAdapter(this)
 
-        return view
+        // Set up TabLayout with ViewPager
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Perfil"
+                1 -> "Historial clínico"
+                else -> null
+            }
+        }.attach()
+    }
 
+    private inner class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
+        override fun getItemCount(): Int = 2 // Two tabs
+
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> PerfilFragment() // Make sure PerfilFragment is implemented
+                1 -> HistorialClinicoFragment() // Make sure HistorialFragment is implemented
+                else -> throw IllegalStateException("Unexpected position: $position")
+            }
+        }
     }
 }
