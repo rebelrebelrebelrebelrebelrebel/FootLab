@@ -69,7 +69,7 @@ class FotosAdapter(
 
             val requestBody = json.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
             val request = Request.Builder()
-                .url("https://7e0e-2806-2f0-92c0-6a47-a8da-3783-a4a-6f58.ngrok-free.app/clasificar") // Use your actual URL here
+                .url("https://fb41-2806-2f0-9181-8aa8-c075-1126-2684-e65d.ngrok-free.app/clasificar") // Use your actual URL here
                 .post(requestBody)
                 .build()
 

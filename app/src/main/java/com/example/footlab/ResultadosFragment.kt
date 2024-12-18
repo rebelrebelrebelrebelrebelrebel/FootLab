@@ -2,11 +2,11 @@ package com.example.footlab
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.content.Intent
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +34,8 @@ class ResultadosFragment : Fragment() {
 
         return view
     }
+
+
 
     private fun cargarFechas() {
         val fechasList = mutableListOf<String>()

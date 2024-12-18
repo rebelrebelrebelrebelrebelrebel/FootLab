@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import com.example.footlab.R
 
@@ -44,7 +45,13 @@ class PerfilFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mostrarInformacion() // Muestra la información aquí
+        mostrarInformacion()
+
+        // Interceptar el evento de "Back" desde el fragmento
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            // No hacer nada cuando se presiona "Atrás"
+            // Esto evita que la actividad o fragmento realice la acción predeterminada
+        }
     }
 
     private fun ocultarInformacion() {

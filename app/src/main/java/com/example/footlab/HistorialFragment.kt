@@ -1,9 +1,13 @@
 package com.example.footlab
 
+import HistorialClinicoFragment
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import openFragment
 
 class HistorialFragment : Fragment() {
 
@@ -21,22 +25,15 @@ class HistorialFragment : Fragment() {
 
 
         botonHistClinica.setOnClickListener {
-            openFragment(HistorialClinicoFragment())
+            requireActivity().openFragment(HistorialClinicoFragment(), "HistorialClinicoFragmentTag")
         }
 
 
         botonResultados.setOnClickListener {
-            openFragment(ResultadosFragment())
+            requireActivity().openFragment(ResultadosFragment(), "ResultadosFragmentTag")
         }
 
         return view
     }
 
-    private fun openFragment(fragment: Fragment, tag: String? = null) {
-        val fragmentTransaction: FragmentTransaction = parentFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.fragment_container, fragment, tag)
-        fragmentTransaction.addToBackStack(null)
-        fragmentTransaction.commit()
-    }
 }
-

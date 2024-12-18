@@ -1,12 +1,13 @@
 package com.example.footlab
 
-import AnalizarFragment
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -17,7 +18,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.footlab.databinding.ActivityMainViewBinding
 import com.example.tuapp.PerfilFragment
@@ -32,15 +32,15 @@ import java.util.Date
 
 class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var fragmentManager: FragmentManager
     private lateinit var binding: ActivityMainViewBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
 
     companion object {
-        const val REQUEST_IMAGE_CAPTURE = 1
-        const val REQUEST_CAMERA_PERMISSION = 200
+        private const val REQUEST_IMAGE_CAPTURE = 1
+        private const val REQUEST_IMAGE_PICK = 2
+        private const val REQUEST_CAMERA_PERMISSION = 200
         const val HOME_FRAGMENT_TAG = "home_fragment"
     }
 
@@ -49,6 +49,7 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         binding = ActivityMainViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Inicialización de Firebase
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
@@ -56,40 +57,36 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         setSupportActionBar(binding.toolbar)
 
         val toggle = ActionBarDrawerToggle(
-            this,
-            binding.drawerLayout,
-            binding.toolbar,
-            R.string.nav_open,
-            R.string.nav_close
+            this, binding.drawerLayout, binding.toolbar, R.string.nav_open, R.string.nav_close
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
         binding.navigationDrawer.setNavigationItemSelectedListener(this)
 
-        // Inicializa la barra de navegación inferior sin HomeFragment
-        binding.bottomNavigation.background = null
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.bottom_gallery -> openFragment(AnalizarFragment())
-                R.id.bottom_help -> openFragment(AyudaFragment())
+                R.id.bottom_gallery -> {
+                    Log.d("MainView", "Gallery clicked")  // Add a log to track interaction
+                    openGallery()
+                    true
+                }
+                R.id.bottom_help -> {
+                    Log.d("MainView", "Help clicked")  // Log to see if the event is triggered
+                    openFragment(AyudaFragment())
+                    true
+                }
+                else -> false
             }
-            true
         }
 
-        fragmentManager = supportFragmentManager
-        openFragment(HomeFragment(), HOME_FRAGMENT_TAG) // Carga solo el HomeFragment al inicio
+
+        openFragment(HomeFragment(), HOME_FRAGMENT_TAG)
 
         binding.fab.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.CAMERA),
-                    REQUEST_CAMERA_PERMISSION
+                    this, arrayOf(Manifest.permission.CAMERA), REQUEST_CAMERA_PERMISSION
                 )
             } else {
                 openCamera()
@@ -101,47 +98,55 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (intent.resolveActivity(packageManager) != null) {
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+        } else {
+            showAlert("No se puede abrir la cámara")
         }
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+            type = "image/*"
+        }
+        startActivityForResult(intent, REQUEST_IMAGE_PICK)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as? Bitmap
-            if (imageBitmap != null) {
-                uploadImageToFirebase(imageBitmap)
-            } else {
-                showAlert("Error al obtener la imagen")
+        when {
+            requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK -> {
+                val imageBitmap = data?.extras?.get("data") as? Bitmap
+                imageBitmap?.let { uploadImageToFirebase(it) } ?: showAlert("Error al capturar la imagen")
+            }
+            requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK -> {
+                val imageUri = data?.data
+                imageUri?.let { handleImageFromGallery(it) } ?: showAlert("Error al seleccionar la imagen")
             }
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    private fun handleImageFromGallery(imageUri: Uri) {
+        val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
+        uploadImageToFirebase(bitmap)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 openCamera()
             } else {
-                Toast.makeText(
-                    this,
-                    "Se requiere permiso de cámara para usar la cámara",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(this, "Permiso de cámara denegado", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun showAlert(message: String) {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Mensaje")
-        builder.setMessage(message)
-        builder.setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-        val dialog = builder.create()
-        dialog.show()
+        AlertDialog.Builder(this).apply {
+            setTitle("Mensaje")
+            setMessage(message)
+            setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+            create().show()
+        }
     }
 
     private fun uploadImageToFirebase(imageBitmap: Bitmap) {
@@ -181,13 +186,12 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
                     if (!documentos.isEmpty) {
                         val batch = firestore.batch()
 
-                        for (paciente in documentos.documents) {
+                        documentos.documents.forEach { paciente ->
                             val docRef = paciente.reference
-                            val fotos = paciente.get("Fotos") as? ArrayList<HashMap<String, Any>> ?: arrayListOf()
-                            val currentDate = Timestamp(Date())
-                            val newPhoto = hashMapOf("Fecha" to currentDate, "URL" to imageUrl)
+                            val newPhoto = mapOf("Fecha" to Timestamp(Date()), "URL" to imageUrl)
                             batch.update(docRef, "Fotos", FieldValue.arrayUnion(newPhoto))
                         }
+
                         batch.commit()
                             .addOnSuccessListener { showAlert("Imagen guardada exitosamente") }
                             .addOnFailureListener { showAlert("Error al guardar la imagen") }
@@ -195,7 +199,7 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
                         showAlert("Usuario no encontrado")
                     }
                 }
-                .addOnFailureListener { showAlert("Error al recuperar el documento") }
+                .addOnFailureListener { showAlert("Error al recuperar los datos del usuario") }
         } else {
             showAlert("Usuario no encontrado")
         }
@@ -205,7 +209,8 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         when (item.itemId) {
             R.id.nav_home -> openFragment(HomeFragment(), HOME_FRAGMENT_TAG)
             R.id.nav_profile -> openFragment(PerfilFragment())
-            R.id.nav_history -> openFragment(HistorialFragment())
+            R.id.nav_galeria -> openFragment(AnalizarFragment())
+            R.id.nav_progreso -> openFragment(HistorialFragment())
             R.id.nav_logout -> cerrarSesion()
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -216,40 +221,35 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            val currentFragment = fragmentManager.findFragmentById(R.id.fragment_container)
+            val currentFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
             if (currentFragment is HomeFragment) {
-                super.onBackPressed() // Permitir salir de la app si estamos en HomeFragment
+                super.onBackPressed()
             } else {
-                openFragment(HomeFragment(), HOME_FRAGMENT_TAG) // Regresar a HomeFragment
+                openFragment(HomeFragment(), HOME_FRAGMENT_TAG)
             }
         }
     }
 
     private fun cerrarSesion() {
-        val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.clear()
-        editor.apply()
-
-        val intent = Intent(this, LoginView::class.java)
-        startActivity(intent)
+        getSharedPreferences("UserData", MODE_PRIVATE).edit().clear().apply()
+        startActivity(Intent(this, LoginView::class.java))
         finish()
     }
 
-    private fun openFragment(fragment: Fragment, tag: String? = null) {
-        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
+    fun openFragment(fragment: Fragment, tag: String? = null) {
+        val fragmentTransaction: FragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.fragment_container, fragment, tag)
 
-        // Solo agrega a la pila de retroceso si no es el HomeFragment
+        // Only add to the back stack if it's not the HomeFragment
         if (tag != HOME_FRAGMENT_TAG) {
             fragmentTransaction.addToBackStack(tag)
         }
 
         fragmentTransaction.commit()
 
-        // Manejo de la visibilidad de BottomAppBar, BottomNavigationView y FAB
+        // Visibility handling for BottomAppBar, BottomNavigationView, and FAB
         when (fragment) {
-            is AnalizarFragment, is HomeFragment -> {
+            is HomeFragment -> {
                 binding.bottomAppBar.visibility = View.GONE
                 binding.bottomNavigation.visibility = View.GONE
                 binding.fab.visibility = View.GONE
@@ -258,7 +258,9 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
                 binding.bottomAppBar.visibility = View.VISIBLE
                 binding.bottomNavigation.visibility = View.VISIBLE
                 binding.fab.visibility = View.VISIBLE
-            }
+}
         }
     }
+
 }
+

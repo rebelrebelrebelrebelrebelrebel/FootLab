@@ -1,0 +1,20 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/analizarFragment">
+
+    <fragment
+        android:id="@+id/analizarFragment"
+        android:name="com.example.footlab.AnalizarFragment"
+        android:label="AnalizarFragment">
+        <!-- Si tienes alguna acción para navegar desde este fragmento, la pones aquí -->
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_galeria"
+        android:name="com.example.footlab.GaleriaFragment"
+        android:label="GaleriaFragment">
+        <!-- Puedes agregar acciones de navegación si es necesario -->
+    </fragment>
+
+</navigation>

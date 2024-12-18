@@ -1,3 +1,5 @@
+package com.example.footlab
+
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,9 +9,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footlab.FotosAdapter
-import com.example.footlab.ModeloTFLite
-import com.example.footlab.R
 import com.example.footlab.utils.FirebaseUtils
 import org.tensorflow.lite.Interpreter
 

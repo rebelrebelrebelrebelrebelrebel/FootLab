@@ -17,7 +17,12 @@
             android:title="Perfil" />
 
         <item
-            android:id="@+id/nav_history"
+            android:id="@+id/nav_galeria"
+            android:icon="@drawable/baseline_gallery_24"
+            android:title="Imágenes" />
+
+        <item
+            android:id="@+id/nav_progreso"
             android:icon="@drawable/baseline_history_24"
             android:title="Progreso" />
 

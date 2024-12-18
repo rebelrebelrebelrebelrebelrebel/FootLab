@@ -10,6 +10,7 @@ object FirebaseUtils {
         val campo = if (username.contains("@")) "Email" else "UserName"
         val db = FirebaseFirestore.getInstance()
 
+        // La carga se realiza aquí solo cuando el usuario lo solicita explícitamente.
         db.collection("Pacientes").whereEqualTo(campo, username).get()
             .addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.documents.isNotEmpty()) {

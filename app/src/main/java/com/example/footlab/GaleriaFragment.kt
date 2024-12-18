@@ -8,11 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.footlab.utils.FirebaseUtils
-import org.tensorflow.lite.Interpreter
 
 class GaleriaFragment : Fragment() {
-
-    private lateinit var interpreter: Interpreter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -20,19 +17,17 @@ class GaleriaFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_galeria, container, false)
 
-        // Inicializar el modelo TensorFlow Lite
-        val modeloTFLite = ModeloTFLite(requireContext())
-        interpreter = Interpreter(modeloTFLite.getModel())
-
         val sharedPreferences = activity?.getSharedPreferences("UserData", Context.MODE_PRIVATE)
         val username = sharedPreferences?.getString("Username", null)
 
         username?.let {
+            // Cargar las fotos desde Firebase solo si no se han cargado aún
             FirebaseUtils.cargarFotos(requireContext(), it) { fotos ->
                 if (fotos.isNotEmpty()) {
-                    // Aquí podrías manejar las fotos de otra manera si es necesario.
+                    // Si hay fotos, mostrar un mensaje de éxito
                     Toast.makeText(context, "Fotos cargadas exitosamente", Toast.LENGTH_SHORT).show()
                 } else {
+                    // Si no hay fotos, mostrar un mensaje correspondiente
                     Toast.makeText(context, "No hay fotos disponibles", Toast.LENGTH_SHORT).show()
                 }
             }

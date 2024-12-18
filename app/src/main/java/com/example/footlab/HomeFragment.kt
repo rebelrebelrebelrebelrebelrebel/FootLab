@@ -1,5 +1,6 @@
 package com.example.footlab
 
+import HistorialClinicoFragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -35,7 +36,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private inner class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-        override fun getItemCount(): Int = 2 // Two tabs
+        override fun getItemCount(): Int = 2 // 3 tabs
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
