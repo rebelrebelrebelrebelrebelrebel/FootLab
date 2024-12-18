@@ -247,9 +247,9 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
 
         fragmentTransaction.commit()
 
-        // Visibility handling for BottomAppBar, BottomNavigationView, and FAB
+        // Control visibility based on the fragment type
         when (fragment) {
-            is HomeFragment -> {
+            is HomeFragment, is ResultadosFragment -> {
                 binding.bottomAppBar.visibility = View.GONE
                 binding.bottomNavigation.visibility = View.GONE
                 binding.fab.visibility = View.GONE
@@ -258,9 +258,10 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
                 binding.bottomAppBar.visibility = View.VISIBLE
                 binding.bottomNavigation.visibility = View.VISIBLE
                 binding.fab.visibility = View.VISIBLE
-}
+            }
         }
     }
+
 
 }
 

@@ -29,5 +29,6 @@
     <string name="porcentaje_esfacelar_amarillo2">Porcentaje Esfacelar Amarillo: %.2f%%</string>
     <string name="porcentaje_necrosado_azul2">Porcentaje Necrosado Azul: %.2f%%</string>
 
-    <string name="ver_resultados">VER RESULTADOS</string> <!-- Optional summary -->
+    <string name="ver_resultados">VER RESULTADOS</string>
+    <string name="aqu_puedes_visualizar_tus_resultados">Aquí puedes visualizar tus resultados</string> <!-- Optional summary -->
 </resources>

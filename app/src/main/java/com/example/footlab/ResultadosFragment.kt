@@ -35,6 +35,15 @@ class ResultadosFragment : Fragment() {
         return view
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Hide the BottomAppBar, BottomNavigation, and FAB when ResultadosFragment is visible
+        activity?.findViewById<View>(R.id.bottomAppBar)?.visibility = View.GONE
+        activity?.findViewById<View>(R.id.bottom_navigation)?.visibility = View.GONE
+        activity?.findViewById<View>(R.id.fab)?.visibility = View.GONE
+    }
+
+
 
 
     private fun cargarFechas() {

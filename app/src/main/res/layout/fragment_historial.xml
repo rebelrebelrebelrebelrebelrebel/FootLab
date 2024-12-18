@@ -3,15 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HistorialFragment">
+    <!-- Title TextView -->
 
-    <Button
-        android:id="@+id/botonVerHistorialClinico"
-        android:layout_width="245dp"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ver_historial_cl_nico"
-        android:backgroundTint="#27276F"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="190dp" />
+        android:layout_marginTop="70dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="@string/aqu_puedes_visualizar_tus_resultados"
+        android:textColor="@color/blueapp"
+        android:textSize="29sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/botonVerResultados"
