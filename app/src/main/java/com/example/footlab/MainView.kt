@@ -20,7 +20,6 @@ import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.footlab.databinding.ActivityMainViewBinding
-import com.example.tuapp.PerfilFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
@@ -208,7 +207,6 @@ class MainView : AppCompatActivity(), NavigationView.OnNavigationItemSelectedLis
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_home -> openFragment(HomeFragment(), HOME_FRAGMENT_TAG)
-            R.id.nav_profile -> openFragment(PerfilFragment())
             R.id.nav_galeria -> openFragment(AnalizarFragment())
             R.id.nav_progreso -> openFragment(HistorialFragment())
             R.id.nav_logout -> cerrarSesion()

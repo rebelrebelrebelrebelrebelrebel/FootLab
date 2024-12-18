@@ -12,11 +12,6 @@
             android:title="Inicio" />
 
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/baseline_person_24"
-            android:title="Perfil" />
-
-        <item
             android:id="@+id/nav_galeria"
             android:icon="@drawable/baseline_gallery_24"
             android:title="Imágenes" />
