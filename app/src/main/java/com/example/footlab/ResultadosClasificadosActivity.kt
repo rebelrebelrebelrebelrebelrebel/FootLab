@@ -5,13 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class ResultadosClasificadosActivity : AppCompatActivity() {
 
@@ -21,6 +15,8 @@ class ResultadosClasificadosActivity : AppCompatActivity() {
     private lateinit var porcentajeAmarilloTextView: TextView
     private lateinit var porcentajeAzulTextView: TextView
     private lateinit var titleTextView: TextView
+    private lateinit var areaTextView: TextView // Área
+    private lateinit var perimetroTextView: TextView // Perímetro
     private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,106 +29,39 @@ class ResultadosClasificadosActivity : AppCompatActivity() {
         porcentajeAmarilloTextView = findViewById(R.id.porcentajeAmarilloTextView)
         porcentajeAzulTextView = findViewById(R.id.porcentajeAzulTextView)
         titleTextView = findViewById(R.id.titleTextView)
+        areaTextView = findViewById(R.id.areaTextView) // Inicializa Área
+        perimetroTextView = findViewById(R.id.perimetroTextView) // Inicializa Perímetro
 
         firestore = FirebaseFirestore.getInstance()
         val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
         val fecha11 = sharedPreferences.getString("FECHA_SELECCIONADA", null)
 
         if (fecha11 != null){
-            loadDataFromFirestore(fecha11)
-        }else{
+            // Se muestran valores estáticos
+            showStaticResults(fecha11)
+        } else {
             showAlert("No se encontró la fecha seleccionada. $fecha11")
         }
-
     }
 
-    private fun loadDataFromFirestore(fechaSeleccionada: String) {
-        val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
-        val username = sharedPreferences.getString("Username", null)
+    private fun showStaticResults(fechaSeleccionada: String) {
+        // Valores estáticos
+        val porcentajeRojo = 2.13
+        val porcentajeAmarillo = 0.0
+        val porcentajeAzul = 97.87
+        val area = 0.66
+        val perimetro = 3.97
 
-        if (username != null) {
-            val campo = if (username.contains("@")) "Email" else "UserName"
+        // Configura los valores estáticos en los TextViews
+        porcentajeRojoTextView.text = getString(R.string.porcentaje_epitelial_rojo2, porcentajeRojo)
+        porcentajeAmarilloTextView.text = getString(R.string.porcentaje_esfacelar_amarillo2, porcentajeAmarillo)
+        porcentajeAzulTextView.text = getString(R.string.porcentaje_necrosado_azul2, porcentajeAzul)
+        areaTextView.text = getString(R.string.area_de_la_herida, area)
+        perimetroTextView.text = getString(R.string.perimetro_de_la_herida, perimetro)
 
-            firestore.collection("Pacientes").whereEqualTo(campo, username)
-                .get()
-                .addOnSuccessListener { documentos ->
-                    if (!documentos.isEmpty) {
-                        for (paciente in documentos.documents) {
-                            val resultados = paciente.get("Resultados") as? ArrayList<HashMap<String, Any>> ?: continue
-                            val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-
-                            // Convertir la cadena a Date
-                            val fechaDate: Date? = try {
-                                inputFormat.parse(fechaSeleccionada)
-                            } catch (e: ParseException) {
-                                e.printStackTrace()
-                                null
-                            }
-                            val fechaSeleccionadaFormatted = fechaDate?.toCustomFormattedString()
-                            var StringDate=""
-
-                            val resultadoFiltrado = resultados.firstOrNull { resultado ->
-                                val fechaFirestore = resultado["Fecha"]
-                                val fechaFirestoreFormatted = when (fechaFirestore) {
-                                    is Timestamp -> {
-                                        // Convierte el Timestamp a Date y luego a String formateada
-                                        val fechaDate=fechaFirestore.toDate()
-                                        val fechaString=fechaDate.toString()
-                                        StringDate=fechaString
-                                    }
-
-                                    else -> {
-
-                                    }
-                                }
-                                // Compara directamente
-                                StringDate == fechaSeleccionadaFormatted
-                            }
-
-                            if (resultadoFiltrado != null) {
-                                // Extrae los datos
-                                val imageUrl = resultadoFiltrado["URL"] as? String
-                                val porcentajeRojo = resultadoFiltrado["PorcentajeEpitelial"] as? Double ?: 0.0
-                                val porcentajeAmarillo = resultadoFiltrado["PorcentajeEsfacelar"] as? Double ?: 0.0
-                                val porcentajeAzul = resultadoFiltrado["PorcentajeNecrosado"] as? Double ?: 0.0
-
-                                // Configura el ImageView y los TextView
-                                if (imageUrl != null) {
-                                    Glide.with(this).load(imageUrl).into(classificationImageView)
-                                }
-
-                                // Muestra los porcentajes en los TextView
-                                porcentajeRojoTextView.text = getString(R.string.porcentaje_epitelial_rojo2, porcentajeRojo)
-                                porcentajeAmarilloTextView.text = getString(R.string.porcentaje_esfacelar_amarillo2, porcentajeAmarillo)
-                                porcentajeAzulTextView.text = getString(R.string.porcentaje_necrosado_azul2, porcentajeAzul)
-
-                                // Muestra la fecha seleccionada
-                                titleTextView.text = fechaSeleccionada
-                            } else {
-                                showAlert("No se encontraron resultados para la fecha seleccionada.")
-                            }
-                        }
-                    } else {
-                        showAlert("Usuario no encontrado")
-                    }
-                }
-                .addOnFailureListener {
-                    showAlert("Error al recuperar el documento")
-                }
-        } else {
-            showAlert("Usuario no encontrado")
-        }
+        // También muestra la fecha seleccionada, si se desea
+        titleTextView.text = fechaSeleccionada
     }
-
-
-
-
-
-    fun Date.toCustomFormattedString(): String {
-        val outputFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale("en", "US"))
-        return outputFormat.format(this)
-    }
-
 
     private fun showAlert(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()

@@ -21,7 +21,7 @@ interface ApiService {
 // Function to create Retrofit instance
 fun createRetrofit(): ApiService {
     val retrofit = Retrofit.Builder()
-        .baseUrl("https://fb41-2806-2f0-9181-8aa8-c075-1126-2684-e65d.ngrok-free.app/clasificar") // Replace with your Flask API base URL
+        .baseUrl(" https://2c21-2806-2f0-9181-8aa8-2178-193d-edc9-224a.ngrok-free.app/clasificar") // Replace with your Flask API base URL
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

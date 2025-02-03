@@ -14,21 +14,26 @@
     <string name="analizar">Analizar</string>
     <string name="navigation_drawer_open">Abrir menú\n\n</string>
     <string name="navigation_drawer_close">Cerrar menú</string>
-    <string name="red_percentage">Porcentaje Epitelial (Rojo): %.2f%%</string>
-    <string name="yellow_percentage">Porcentaje Esfacelar (Amarillo): %.2f%%</string>
-    <string name="blue_percentage">Porcentaje Necrosado (Azul): %.2f%%</string>
+
+
+    <string name="area_de_la_herida">Área de la herida: %1$.2f cm²</string>
+    <string name="perimetro_de_la_herida">Perímetro de la herida: %1$.2f cm</string>
+    <string name="red_percentage">Rojizo (Rojo) %.2f%%</string>
+    <string name="yellow_percentage">Amarillento (Amarillo): %.2f%%</string>
+    <string name="blue_percentage">Negruzco (Azul): %.2f%%</string>
     <string name="classification_results_summary">Resultados de Clasificación</string>
-    <string name="porcentaje_epitelial_rojo">Porcentaje Epitelial (Rojo):</string>
-    <string name="porcentaje_esfacelar_amarillo">Porcentaje Esfacelar (Amarillo):</string>
-    <string name="porcentaje_necrosado_azul">Porcentaje Necrosado (Azul):</string>
-    <string name="resultados_de_clasificaci_n">Resultados de Clasificación</string>
-    <string name="clasificaci_n_de_tejidos">Clasificación de Tejidos</string>
+    <string name="porcentaje_epitelial_rojo">Rojizo (Rojo):</string>
+    <string name="porcentaje_esfacelar_amarillo">Amarillento (Amarillo):</string>
+    <string name="porcentaje_necrosado_azul">Negruzco (Azul):</string>
+    <string name="resultados_de_clasificaci_n">Porcentajes de Coloración</string>
+    <string name="clasificaci_n_de_tejidos">Clasificación de Herida</string>
     <string name="ver_historial_cl_nico">VER HISTORIAL CLÍNICO</string>
 
-    <string name="porcentaje_epitelial_rojo2">Porcentaje Epitelial Rojo: %.2f%%</string>
-    <string name="porcentaje_esfacelar_amarillo2">Porcentaje Esfacelar Amarillo: %.2f%%</string>
-    <string name="porcentaje_necrosado_azul2">Porcentaje Necrosado Azul: %.2f%%</string>
+    <string name="porcentaje_epitelial_rojo2">Rojizo: %.2f%%</string>
+    <string name="porcentaje_esfacelar_amarillo2">Amarillento: %.2f%%</string>
+    <string name="porcentaje_necrosado_azul2">Negruzco: %.2f%%</string>
 
     <string name="ver_resultados">VER RESULTADOS</string>
-    <string name="aqu_puedes_visualizar_tus_resultados">Aquí puedes visualizar tus resultados</string> <!-- Optional summary -->
+    <string name="aqu_puedes_visualizar_tus_resultados">Aquí puedes visualizar tus resultados</string>
+<!-- Optional summary -->
 </resources>

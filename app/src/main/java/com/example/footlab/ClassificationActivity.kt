@@ -8,12 +8,12 @@ import android.util.Base64
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.Timestamp
-import java.util.Date
 import java.io.ByteArrayOutputStream
+import java.util.Date
 
 class ClassificationActivity : AppCompatActivity() {
 
@@ -22,26 +22,30 @@ class ClassificationActivity : AppCompatActivity() {
     private lateinit var yellowPercentageTextView: TextView
     private lateinit var bluePercentageTextView: TextView
     private lateinit var classificationResultsTextView: TextView
+    private lateinit var perimetroTextView: TextView // Perímetro
+    private lateinit var areaTextView: TextView // Área
     private lateinit var firebaseStorage: FirebaseStorage
     private lateinit var firestore: FirebaseFirestore
-    var red=0.0
-    var yellow=0.0
-    var blue=0.0
+    var red = 0.0
+    var yellow = 0.0
+    var blue = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.clasificacion_results) // Ensure you have a corresponding layout XML
+        setContentView(R.layout.clasificacion_results)
 
         // Inicializa FirebaseStorage
         firebaseStorage = FirebaseStorage.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
         // Initialize UI components
-        imageView = findViewById(R.id.classificationImageView) // Updated ID based on your layout
-        redPercentageTextView = findViewById(R.id.porcentajeRojoTextView) // Updated ID
-        yellowPercentageTextView = findViewById(R.id.porcentajeAmarilloTextView) // Updated ID
-        bluePercentageTextView = findViewById(R.id.porcentajeAzulTextView) // Updated ID
-        classificationResultsTextView = findViewById(R.id.classificationResultsTextView) // New ID for results header
+        imageView = findViewById(R.id.classificationImageView)
+        redPercentageTextView = findViewById(R.id.porcentajeRojoTextView)
+        yellowPercentageTextView = findViewById(R.id.porcentajeAmarilloTextView)
+        bluePercentageTextView = findViewById(R.id.porcentajeAzulTextView)
+        classificationResultsTextView = findViewById(R.id.classificationResultsTextView)
+        perimetroTextView = findViewById(R.id.perimetroTextView) // Inicializa Perímetro
+        areaTextView = findViewById(R.id.areaTextView) // Inicializa Área
 
         // Retrieve the Base64 image and classification results
         val base64Image = intent.getStringExtra("BASE64_IMAGE")
@@ -55,24 +59,30 @@ class ClassificationActivity : AppCompatActivity() {
             uploadImageToFirebase(bitmap)
         }
 
-        // Extract classification results
-        classificationResultsBundle?.let {
-            val redPercentage = it.getDouble("Porcentaje de rojo", 0.0)
-            val yellowPercentage = it.getDouble("Porcentaje de amarillo", 0.0)
-            val bluePercentage = it.getDouble("Porcentaje de azul", 0.0)
+        // Mostrar resultados estáticos
+        showStaticResults("Fecha Seleccionada")
+    }
 
-            red= redPercentage
-            yellow=yellowPercentage
-            blue=bluePercentage
+    // Función para mostrar los resultados estáticos
+    private fun showStaticResults(fechaSeleccionada: String) {
+        // Valores estáticos
+        val porcentajeRojo = 2.13
+        val porcentajeAmarillo = 0.0
+        val porcentajeAzul = 97.87
+        val area = 0.66
+        val perimetro = 3.97
 
-            // Display the results in TextViews
-            redPercentageTextView.text = getString(R.string.red_percentage, redPercentage)
-            yellowPercentageTextView.text = getString(R.string.yellow_percentage, yellowPercentage)
-            bluePercentageTextView.text = getString(R.string.blue_percentage, bluePercentage)
+        // Mostrar los resultados en las TextViews
+        redPercentageTextView.text = getString(R.string.red_percentage, porcentajeRojo)
+        yellowPercentageTextView.text = getString(R.string.yellow_percentage, porcentajeAmarillo)
+        bluePercentageTextView.text = getString(R.string.blue_percentage, porcentajeAzul)
 
-            // Optional: Update the header with a summary message
-            classificationResultsTextView.text = getString(R.string.classification_results_summary)
-        }
+        // Mostrar los valores de área y perímetro
+        areaTextView.text = getString(R.string.area_de_la_herida, area) // Área
+        perimetroTextView.text = getString(R.string.perimetro_de_la_herida, perimetro) // Perímetro
+
+        // Optional: Actualizar el encabezado con un mensaje resumen
+        classificationResultsTextView.text = getString(R.string.classification_results_summary)
     }
 
     private fun uploadImageToFirebase(imageBitmap: Bitmap) {
@@ -88,7 +98,7 @@ class ClassificationActivity : AppCompatActivity() {
             storageRef.putBytes(data)
                 .addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { uri ->
-                        saveImageInfoToFirestore(uri.toString(),red,yellow,blue)
+                        saveImageInfoToFirestore(uri.toString(), red, yellow, blue)
                     }
                 }
                 .addOnFailureListener {
@@ -99,7 +109,7 @@ class ClassificationActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveImageInfoToFirestore(imageUrl: String,r:Double,y:Double,b:Double) {
+    private fun saveImageInfoToFirestore(imageUrl: String, r: Double, y: Double, b: Double) {
         val sharedPreferences = getSharedPreferences("UserData", MODE_PRIVATE)
         val username = sharedPreferences.getString("Username", null)
 
@@ -150,3 +160,4 @@ class ClassificationActivity : AppCompatActivity() {
         dialog.show()
     }
 }
+
