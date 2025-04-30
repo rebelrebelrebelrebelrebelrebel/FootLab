@@ -14,14 +14,14 @@ data class ClassificationResponse(val prediction: String, val confidence: Float)
 
 // Interface for the API service
 interface ApiService {
-    @POST("/clasificar") // Change the endpoint to match your Flask API
+    @POST("clasificar") // Change the endpoint to match your Flask API
     fun classifyImage(@Body request: ImageRequest): Call<ClassificationResponse>
 }
 
 // Function to create Retrofit instance
 fun createRetrofit(): ApiService {
     val retrofit = Retrofit.Builder()
-        .baseUrl(" https://2c21-2806-2f0-9181-8aa8-2178-193d-edc9-224a.ngrok-free.app/clasificar") // Replace with your Flask API base URL
+        .baseUrl("https://a7c2-2806-2f0-9181-8aa8-44b8-5c56-51ae-22b3.ngrok-free.app/clasificar") // Replace with your Flask API base URL
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

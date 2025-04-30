@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL =  " https://2c21-2806-2f0-9181-8aa8-2178-193d-edc9-224a.ngrok-free.app/clasificar" // Your Flask server URL
+    private const val BASE_URL =  "https://a7c2-2806-2f0-9181-8aa8-44b8-5c56-51ae-22b3.ngrok-free.app/clasificar" // Your Flask server URL
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -16,8 +16,8 @@ object RetrofitClient {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(logging)
-        .readTimeout(60, TimeUnit.SECONDS)    // Configuración de tiempo de lectura
-        .connectTimeout(60, TimeUnit.SECONDS) // Configuración de tiempo de conexión
+        .readTimeout(120, TimeUnit.SECONDS)    // Configuración de tiempo de lectura
+        .connectTimeout(120, TimeUnit.SECONDS) // Configuración de tiempo de conexión
         .build()
 
     val apiService: ApiService by lazy {
