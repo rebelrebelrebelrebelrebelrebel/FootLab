@@ -1,6 +1,5 @@
 package com.example.footlab
 
-import ApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,7 +7,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL =  "https://a7c2-2806-2f0-9181-8aa8-44b8-5c56-51ae-22b3.ngrok-free.app/clasificar" // Your Flask server URL
+    private const val BASE_URL = "https://7c70-2806-2f0-9181-8aa8-4432-551c-94dd-e92d.ngrok-free.app/"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -16,16 +15,18 @@ object RetrofitClient {
 
     private val client = OkHttpClient.Builder()
         .addInterceptor(logging)
-        .readTimeout(120, TimeUnit.SECONDS)    // Configuración de tiempo de lectura
-        .connectTimeout(120, TimeUnit.SECONDS) // Configuración de tiempo de conexión
+        .readTimeout(240, TimeUnit.SECONDS)
+        .connectTimeout(240, TimeUnit.SECONDS)
         .build()
 
     val apiService: ApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .client(client) // Agrega el cliente con el interceptor de logging y los tiempos de espera
+            .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ApiService::class.java)
     }
 }
+
+

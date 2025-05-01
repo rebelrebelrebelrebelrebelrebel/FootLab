@@ -1,69 +1,68 @@
 package com.example.footlab
 
 import android.os.Bundle
+import android.util.Base64
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.firestore.FirebaseFirestore
+import org.json.JSONObject
 
 class ResultadosClasificadosActivity : AppCompatActivity() {
-
-    private lateinit var classificationImageView: ImageView
-    private lateinit var classificationResultsTextView: TextView
-    private lateinit var porcentajeRojoTextView: TextView
-    private lateinit var porcentajeAmarilloTextView: TextView
-    private lateinit var porcentajeAzulTextView: TextView
-    private lateinit var titleTextView: TextView
-    private lateinit var areaTextView: TextView // Área
-    private lateinit var perimetroTextView: TextView // Perímetro
-    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_resultados_clasificados)
 
-        classificationImageView = findViewById(R.id.classificationImageView)
-        classificationResultsTextView = findViewById(R.id.classificationResultsTextView)
-        porcentajeRojoTextView = findViewById(R.id.porcentajeRojoTextView)
-        porcentajeAmarilloTextView = findViewById(R.id.porcentajeAmarilloTextView)
-        porcentajeAzulTextView = findViewById(R.id.porcentajeAzulTextView)
-        titleTextView = findViewById(R.id.titleTextView)
-        areaTextView = findViewById(R.id.areaTextView) // Inicializa Área
-        perimetroTextView = findViewById(R.id.perimetroTextView) // Inicializa Perímetro
+        val jsonString = intent.getStringExtra("RESULTADO_JSON")
+        if (jsonString != null) {
+            val json = JSONObject(jsonString)
 
-        firestore = FirebaseFirestore.getInstance()
-        val sharedPreferences = getSharedPreferences("AppPrefs", MODE_PRIVATE)
-        val fecha11 = sharedPreferences.getString("FECHA_SELECCIONADA", null)
+            // Cargar imagen clasificada (base64)
+            val clasificadaBase64 = json.optString("imagen_clasificada", "")
+            val clasificadaBitmap = clasificadaBase64.decodeBase64ToBitmap()
+            findViewById<ImageView>(R.id.classificationImageView).setImageBitmap(clasificadaBitmap)
 
-        if (fecha11 != null){
-            // Se muestran valores estáticos
-            showStaticResults(fecha11)
-        } else {
-            showAlert("No se encontró la fecha seleccionada. $fecha11")
+            // Cargar imagen de segmentación (base64)
+            val segmentacionBase64 = json.optString("imagen_segmentacion", "")
+            val segmentacionBitmap = segmentacionBase64.decodeBase64ToBitmap()
+            findViewById<ImageView>(R.id.tissuesegmentationImageView).setImageBitmap(segmentacionBitmap)
+
+            // Porcentajes
+            findViewById<TextView>(R.id.porcentajeRojoTextView).text =
+                "Epitelial (rojo): ${json.optDouble("porcentaje_rojo", 0.0)}%"
+            findViewById<TextView>(R.id.porcentajeAmarilloTextView).text =
+                "Esfacelar (amarillo): ${json.optDouble("porcentaje_amarillo", 0.0)}%"
+            findViewById<TextView>(R.id.porcentajeAzulTextView).text =
+                "Necrosado (azul): ${json.optDouble("porcentaje_azul", 0.0)}%"
+
+            findViewById<TextView>(R.id.areaTextView).text =
+                "Área de la herida: ${json.optDouble("area", 0.0)} px²"
+            findViewById<TextView>(R.id.perimetroTextView).text =
+                "Perímetro de la herida: ${json.optDouble("perimetro", 0.0)} px"
+
+            // Tejido segmentado
+            findViewById<TextView>(R.id.porcentajeCallosoTextView).text =
+                "Calloso: ${json.optDouble("porcentaje_calloso", 0.0)}%"
+            findViewById<TextView>(R.id.porcentajeFibrinaTextView).text =
+                "Fibrina: ${json.optDouble("porcentaje_fibrina", 0.0)}%"
+            findViewById<TextView>(R.id.porcentajeGranulacionTextView).text =
+                "Granulación: ${json.optDouble("porcentaje_granulacion", 0.0)}%"
+
+            findViewById<TextView>(R.id.tamanoCallosoTextView).text =
+                "Tamaño Calloso: ${json.optDouble("tamano_calloso", 0.0)} px²"
+            findViewById<TextView>(R.id.tamanoFibrinaTextView).text =
+                "Tamaño Fibrina: ${json.optDouble("tamano_fibrina", 0.0)} px²"
+            findViewById<TextView>(R.id.tamanoGranuladoTextView).text =
+                "Tamaño Granulado: ${json.optDouble("tamano_granulado", 0.0)} px²"
         }
     }
 
-    private fun showStaticResults(fechaSeleccionada: String) {
-        // Valores estáticos
-        val porcentajeRojo = 2.13
-        val porcentajeAmarillo = 0.0
-        val porcentajeAzul = 97.87
-        val area = 0.66
-        val perimetro = 3.97
-
-        // Configura los valores estáticos en los TextViews
-        porcentajeRojoTextView.text = getString(R.string.porcentaje_epitelial_rojo2, porcentajeRojo)
-        porcentajeAmarilloTextView.text = getString(R.string.porcentaje_esfacelar_amarillo2, porcentajeAmarillo)
-        porcentajeAzulTextView.text = getString(R.string.porcentaje_necrosado_azul2, porcentajeAzul)
-        areaTextView.text = getString(R.string.area_de_la_herida, area)
-        perimetroTextView.text = getString(R.string.perimetro_de_la_herida, perimetro)
-
-        // También muestra la fecha seleccionada, si se desea
-        titleTextView.text = fechaSeleccionada
-    }
-
-    private fun showAlert(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun String.decodeBase64ToBitmap(): android.graphics.Bitmap? {
+        return try {
+            val decodedBytes = Base64.decode(this, Base64.DEFAULT)
+            android.graphics.BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+        } catch (e: Exception) {
+            null
+        }
     }
 }

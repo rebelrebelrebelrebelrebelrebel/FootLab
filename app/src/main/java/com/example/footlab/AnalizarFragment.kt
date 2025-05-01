@@ -24,7 +24,6 @@ class AnalizarFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_galeria, container, false)
 
-        // Inicializar el modelo TensorFlow Lite
         val modeloTFLite = ModeloTFLite(requireContext())
         interpreter = Interpreter(modeloTFLite.getModel())
 
@@ -37,9 +36,7 @@ class AnalizarFragment : Fragment() {
         username?.let {
             FirebaseUtils.cargarFotos(requireContext(), it) { fotos ->
                 if (fotos.isNotEmpty()) {
-                    // Asignar las fotos al adaptador sin interacción con la API
                     fotosAdapter = FotosAdapter(requireContext(), fotos, interpreter) { imageUrl ->
-                        // Aquí puedes manejar cualquier otra lógica que desees al hacer clic
                         Toast.makeText(context, "Foto seleccionada: $imageUrl", Toast.LENGTH_SHORT).show()
                     }
                     recyclerViewFotos.adapter = fotosAdapter
