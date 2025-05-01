@@ -22,9 +22,9 @@
     <string name="yellow_percentage">Amarillento (Amarillo): %.2f%%</string>
     <string name="blue_percentage">Negruzco (Azul): %.2f%%</string>
     <string name="classification_results_summary">Resultados de Clasificación</string>
-    <string name="porcentaje_epitelial_rojo">Rojizo (Rojo):</string>
-    <string name="porcentaje_esfacelar_amarillo">Amarillento (Amarillo):</string>
-    <string name="porcentaje_necrosado_azul">Negruzco (Azul):</string>
+    <string name="porcentaje_epitelial_rojo">Porcentaje de rojo:</string>
+    <string name="porcentaje_esfacelar_amarillo">Porcentaje de amarillo:</string>
+    <string name="porcentaje_necrosado_azul">Porcentaje de azúl:</string>
     <string name="resultados_de_clasificaci_n">Porcentajes de Coloración</string>
     <string name="clasificaci_n_de_tejidos">Clasificación de Herida</string>
     <string name="ver_historial_cl_nico">VER HISTORIAL CLÍNICO</string>
@@ -35,5 +35,11 @@
 
     <string name="ver_resultados">VER RESULTADOS</string>
     <string name="aqu_puedes_visualizar_tus_resultados">Aquí puedes visualizar tus resultados</string>
-<!-- Optional summary -->
+    <string name="porcentaje_de_calloso">Porcentaje de calloso: %.2f%%</string>
+    <string name="porcentaje_de_fibrina">Porcentaje de fibrina: %.2f%%</string>
+    <string name="porcentaje_de_granulacion">Porcentaje de granulación: %.2f%%</string>
+    <string name="tama_o_de_calloso">Tamaño de calloso:</string>
+    <string name="tama_o_de_granulado">Tamaño de granulado:</string>
+    <string name="tama_o_de_fibrina">Tamaño de fibrina:</string>
+    <!-- Optional summary -->
 </resources>

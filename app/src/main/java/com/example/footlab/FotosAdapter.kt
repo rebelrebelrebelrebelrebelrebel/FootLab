@@ -102,8 +102,8 @@ class FotosAdapter(
             val bluePercentage = jsonResponse.optDouble("Porcentaje de azul", 0.0)
             val redPercentage = jsonResponse.optDouble("Porcentaje de rojo", 0.0)
 
-            if (jsonResponse.has("predictions_image")) {
-                val predictionsImageBase64 = jsonResponse.getString("predictions_image")
+            if (jsonResponse.has("predictions_clas_image")) {
+                val predictionsImageBase64 = jsonResponse.getString("predictions_clas_image")
                 val classificationResultsBundle = Bundle().apply {
                     putDouble("Porcentaje de amarillo", yellowPercentage)
                     putDouble("Porcentaje de azul", bluePercentage)

@@ -1,94 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#F8F8F8"
-    android:gravity="center"
     android:padding="16dp"
+    android:gravity="center"
     tools:context=".ResultadosClasificadosActivity">
 
-    <!-- Title TextView -->
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
+    <!-- Inside ScrollView, use LinearLayout as the root layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:layout_marginTop="32dp"
-        android:text=""
-        android:textColor="@color/blueapp"
-        android:textSize="29sp"
-        android:textStyle="bold"/>
+        android:orientation="vertical"
+        android:gravity="center">
 
-    <!-- ImageView for displaying the classified image -->
-    <ImageView
-        android:id="@+id/classificationImageView"
-        android:layout_width="333dp"
-        android:layout_height="330dp"
-        android:scaleType="centerCrop"
-        android:padding="10dp"
-        android:elevation="10dp"/>
+        <!-- Title TextView -->
+        <TextView
+            android:id="@+id/titleTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:layout_marginTop="32dp"
+            android:text=""
+            android:textColor="@color/blueapp"
+            android:textSize="29sp"
+            android:textStyle="bold"/>
 
-    <!-- TextView for displaying classification results -->
-    <TextView
-        android:id="@+id/classificationResultsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/resultados_de_clasificaci_n"
-        android:textColor="@color/blueapp"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:textStyle="bold"/>
+        <!-- ImageView for displaying the classified image -->
+        <ImageView
+            android:id="@+id/classificationImageView"
+            android:layout_width="333dp"
+            android:layout_height="330dp"
+            android:scaleType="centerCrop"
+            android:padding="10dp"
+            android:elevation="10dp"/>
 
-    <!-- Porcentaje de rojo -->
-    <TextView
-        android:id="@+id/porcentajeRojoTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/porcentaje_epitelial_rojo"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"/>
+        <!-- TextView for displaying classification results -->
+        <TextView
+            android:id="@+id/classificationResultsTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resultados_de_clasificaci_n"
+            android:textColor="@color/blueapp"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            android:textStyle="bold"/>
 
-    <!-- Porcentaje de amarillo -->
-    <TextView
-        android:id="@+id/porcentajeAmarilloTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/porcentaje_esfacelar_amarillo"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"/>
+        <!-- Porcentaje de rojo -->
+        <TextView
+            android:id="@+id/porcentajeRojoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/porcentaje_epitelial_rojo"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
 
-    <!-- Porcentaje de azul -->
-    <TextView
-        android:id="@+id/porcentajeAzulTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/porcentaje_necrosado_azul"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"/>
+        <!-- Porcentaje de amarillo -->
+        <TextView
+            android:id="@+id/porcentajeAmarilloTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/porcentaje_esfacelar_amarillo"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
 
+        <!-- Porcentaje de azul -->
+        <TextView
+            android:id="@+id/porcentajeAzulTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/porcentaje_necrosado_azul"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:id="@+id/areaTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/area_de_la_herida"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"/>
+        <TextView
+            android:id="@+id/areaTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/area_de_la_herida"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:id="@+id/perimetroTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/perimetro_de_la_herida"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/perimetroTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/perimetro_de_la_herida"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- ImageView for displaying the tissue segmentation image -->
+        <ImageView
+            android:id="@+id/tissuesegmentationImageView"
+            android:layout_width="333dp"
+            android:layout_height="330dp"
+            android:scaleType="centerCrop"
+            android:padding="10dp"
+            android:elevation="10dp"/>
+
+        <!-- Porcentaje de calloso -->
+        <TextView
+            android:id="@+id/porcentajeCallosoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/porcentaje_de_calloso"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Porcentaje de fibrina -->
+        <TextView
+            android:id="@+id/porcentajeFibrinaTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/porcentaje_de_fibrina"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Porcentaje de granulación -->
+        <TextView
+            android:id="@+id/porcentajeGranulacionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/porcentaje_de_granulacion"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Tamaño de calloso -->
+        <TextView
+            android:id="@+id/tamanoCallosoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tama_o_de_calloso"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Tamaño de fibrina -->
+        <TextView
+            android:id="@+id/tamanoFibrinaTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tama_o_de_fibrina"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+        <!-- Tamaño de granulado -->
+        <TextView
+            android:id="@+id/tamanoGranuladoTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tama_o_de_granulado"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"/>
+
+    </LinearLayout>
+</ScrollView>
