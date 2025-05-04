@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class FechaAdapter(
-    private val fechas: List<String>,
-    private val onFechaClick: (String) -> Unit
+    private val fechas: List<Pair<String, HashMap<String, Any>>>,
+    private val onFechaClick: (String, HashMap<String, Any>) -> Unit
 ) : RecyclerView.Adapter<FechaAdapter.FechaViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FechaViewHolder {
@@ -18,17 +18,26 @@ class FechaAdapter(
     }
 
     override fun onBindViewHolder(holder: FechaViewHolder, position: Int) {
-        val fecha = fechas[position]
-        holder.bind(fecha, onFechaClick)
+        val (fecha, resultado) = fechas[position]
+        holder.bind(fecha, resultado, onFechaClick)
     }
 
     override fun getItemCount(): Int = fechas.size
 
     class FechaViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(fecha: String, onFechaClick: (String) -> Unit) {
-            itemView.findViewById<TextView>(R.id.textViewFecha).text = fecha
+        private val textViewFecha: TextView = itemView.findViewById(R.id.textViewFecha)
+
+        fun bind(
+            fecha: String,
+            resultado: HashMap<String, Any>,
+            onFechaClick: (String, HashMap<String, Any>) -> Unit
+        ) {
+            textViewFecha.text = fecha
             itemView.setOnClickListener {
-                onFechaClick(fecha) // Llama a la función para manejar el clic
+                // Añadir una verificación para asegurarse de que los datos están completos
+                if (resultado.isNotEmpty()) {
+                    onFechaClick(fecha, resultado)
+                }
             }
         }
     }
