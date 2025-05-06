@@ -1,26 +1,65 @@
 {
   "project_info": {
-    "project_number": "212565611033",
-    "project_id": "footlab-7827e",
-    "storage_bucket": "footlab-7827e.appspot.com"
+    "project_number": "1096786966830",
+    "project_id": "base-pd-313ed",
+    "storage_bucket": "base-pd-313ed.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:212565611033:android:07564d76f247b0746ad088",
+        "mobilesdk_app_id": "1:1096786966830:android:a5d16eddd19238995aa2bf",
         "android_client_info": {
           "package_name": "com.example.footlab"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1096786966830-p2kjvno4tkfj1277uc3vi1qf3dbbef9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCpxUrJy9Ondb8i_PMEHpCnShzhIH7S4_M"
+          "current_key": "AIzaSyA9A-hK6CEuw8wKeX0Xi9UEpwknqRgLlXg"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096786966830-p2kjvno4tkfj1277uc3vi1qf3dbbef9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096786966830:android:3f02dd3b6256eec85aa2bf",
+        "android_client_info": {
+          "package_name": "com.rebel.kananapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096786966830-p2kjvno4tkfj1277uc3vi1qf3dbbef9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA9A-hK6CEuw8wKeX0Xi9UEpwknqRgLlXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1096786966830-p2kjvno4tkfj1277uc3vi1qf3dbbef9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
