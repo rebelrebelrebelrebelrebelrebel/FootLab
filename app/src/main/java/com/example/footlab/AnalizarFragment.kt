@@ -1,6 +1,5 @@
 package com.example.footlab
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,7 @@ class AnalizarFragment : Fragment() {
 
     private lateinit var recyclerViewFotos: RecyclerView
     private lateinit var fotosAdapter: FotosAdapter
-    private lateinit var interpreter: Interpreter
+    // private lateinit var interpreter: Interpreter  <-- eliminar
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,25 +23,18 @@ class AnalizarFragment : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_galeria, container, false)
 
-        val modeloTFLite = ModeloTFLite(requireContext())
-        interpreter = Interpreter(modeloTFLite.getModel())
-
         recyclerViewFotos = rootView.findViewById(R.id.recycler_view_fotos)
         recyclerViewFotos.layoutManager = LinearLayoutManager(context)
 
-        val sharedPreferences = activity?.getSharedPreferences("UserData", Context.MODE_PRIVATE)
-        val username = sharedPreferences?.getString("Username", null)
-
-        username?.let {
-            FirebaseUtils.cargarFotos(requireContext(), it) { fotos ->
-                if (fotos.isNotEmpty()) {
-                    fotosAdapter = FotosAdapter(requireContext(), fotos, interpreter) { imageUrl ->
-                        Toast.makeText(context, "Foto seleccionada: $imageUrl", Toast.LENGTH_SHORT).show()
-                    }
-                    recyclerViewFotos.adapter = fotosAdapter
-                } else {
-                    Toast.makeText(context, "No hay fotos disponibles", Toast.LENGTH_SHORT).show()
+        FirebaseUtils.cargarFotos(requireContext()) { fotos ->
+            if (fotos.isNotEmpty()) {
+                // Aquí ya sin interpreter
+                fotosAdapter = FotosAdapter(requireContext(), fotos) { imageUrl ->
+                    Toast.makeText(context, "Foto seleccionada: $imageUrl", Toast.LENGTH_SHORT).show()
                 }
+                recyclerViewFotos.adapter = fotosAdapter
+            } else {
+                Toast.makeText(context, "No hay fotos disponibles", Toast.LENGTH_SHORT).show()
             }
         }
 

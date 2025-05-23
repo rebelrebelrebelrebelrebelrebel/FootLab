@@ -1,10 +1,10 @@
-package com.example.tuapp.ui
+package com.example.footlab
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.footlab.GaleriaFragment
 import com.example.footlab.HistorialClinicoFragment
-import com.example.tuapp.PerfilFragment
+import com.example.footlab.PerfilFragment
 
 class HomePagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 

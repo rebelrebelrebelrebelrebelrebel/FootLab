@@ -1,6 +1,7 @@
 package com.example.footlab
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -10,10 +11,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class HistorialClinicoFragment : Fragment() {
 
@@ -40,6 +44,9 @@ class HistorialClinicoFragment : Fragment() {
     private lateinit var editTextControlComorbilidades: EditText
     private lateinit var buttonGuardar: Button
 
+    private lateinit var tomarFotoLauncher: ActivityResultLauncher<Intent>
+    private val storageRef = FirebaseStorage.getInstance().reference
+
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
@@ -48,6 +55,36 @@ class HistorialClinicoFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.fragment_historial_clinico, container, false)
+
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+
+        val currentUser = auth.currentUser
+        if (currentUser == null) {
+            // Aquí puedes redirigir a LoginActivity o hacer algo más
+        } else {
+            // Usuario autenticado, seguimos con SharedPreferences para obtener PacienteID
+            sharedPreferences =
+                requireContext().getSharedPreferences("UserData", Context.MODE_PRIVATE)
+            val pacienteId = sharedPreferences.getString("PacienteID", null)
+
+            if (pacienteId != null) {
+                Log.d("HistorialClinico", "PacienteID obtenido: $pacienteId")
+                isHistorialClinicoVacio(pacienteId) { vacio ->
+                    if (vacio) {
+                        habilitarCampos()
+                        mostrarDialogoCreacion()
+                    } else {
+                        cargarHistorialClinico(pacienteId)
+                        deshabilitarCampos()
+                    }
+                }
+            } else {
+                Log.e("HistorialClinico", "No se encontró el PacienteID en SharedPreferences")
+                Toast.makeText(requireContext(), "Usuario no encontrado", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         // Inicializar vistas
         editTextNombre = view.findViewById(R.id.editTextNombres)
@@ -72,8 +109,8 @@ class HistorialClinicoFragment : Fragment() {
         editTextControlComorbilidades = view.findViewById(R.id.editTextControlComorbilidades)
         buttonGuardar = view.findViewById(R.id.buttonGuardar)
 
-        auth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
+
+
 
         // Obtener el PacienteID desde SharedPreferences
         sharedPreferences = requireContext().getSharedPreferences("UserData", Context.MODE_PRIVATE)
@@ -81,7 +118,7 @@ class HistorialClinicoFragment : Fragment() {
 
         if (pacienteId != null) {
             Log.d("HistorialClinico", "PacienteID obtenido: $pacienteId")
-            // Verificar si el historial clínico ya existe
+            // Verificar si el Historial clinico ya existe
             isHistorialClinicoVacio(pacienteId) { vacio ->
                 if (vacio) {
                     habilitarCampos()
@@ -104,9 +141,9 @@ class HistorialClinicoFragment : Fragment() {
     }
 
     private fun isHistorialClinicoVacio(pacienteId: String, callback: (Boolean) -> Unit) {
-        firestore.collection("pacientes")
+        firestore.collection("Pacientes")
             .document(pacienteId)
-            .collection("Historial clínico")
+            .collection("Historial clinico")
             .get()
             .addOnSuccessListener { result ->
                 callback(result.isEmpty)
@@ -117,9 +154,9 @@ class HistorialClinicoFragment : Fragment() {
     }
 
     private fun cargarHistorialClinico(pacienteId: String) {
-        firestore.collection("pacientes")
+        firestore.collection("Pacientes")
             .document(pacienteId)
-            .collection("Historial clínico")
+            .collection("Historial clinico")
             .document("Registro")
             .get()
             .addOnSuccessListener { document ->
@@ -144,6 +181,9 @@ class HistorialClinicoFragment : Fragment() {
                     editTextControlGlicemico.setText(it.getString("ControlGlicemico"))
                     editTextManejoPieDiabetico.setText(it.getString("ManejoPieDiabetico"))
                     editTextControlComorbilidades.setText(it.getString("ControlComorbilidades"))
+
+                    deshabilitarCampos()
+                    buttonGuardar.visibility = View.INVISIBLE
                 }
             }
     }
@@ -170,105 +210,145 @@ class HistorialClinicoFragment : Fragment() {
                 "Obesidad" to editTextObesidad.text.toString(),
                 "ControlGlicemico" to editTextControlGlicemico.text.toString(),
                 "ManejoPieDiabetico" to editTextManejoPieDiabetico.text.toString(),
-                "ControlComorbilidades" to editTextControlComorbilidades.text.toString()
+                "ControlComorbilidades" to editTextControlComorbilidades.text.toString(),
+                "FechaRegistro" to FieldValue.serverTimestamp()
             )
 
-            val pacienteId = sharedPreferences.getString("PacienteID", null)
+            mostrarDialogoFoto()
 
+            val pacienteId = sharedPreferences.getString("PacienteID", null)
             if (pacienteId != null) {
-                firestore.collection("pacientes")
+                firestore.collection("Pacientes")
                     .document(pacienteId)
-                    .collection("Historial clínico")
+                    .collection("Historial clinico")
                     .document("Registro")
                     .set(datos)
                     .addOnSuccessListener {
                         Toast.makeText(
                             requireContext(),
-                            "Historial guardado correctamente",
+                            "Datos guardados correctamente",
                             Toast.LENGTH_SHORT
                         ).show()
                         deshabilitarCampos()
-                        mostrarDialogoFoto()
-                        buttonGuardar.visibility = View.GONE
+                        buttonGuardar.visibility = View.INVISIBLE
                     }
-                    .addOnFailureListener { e ->
+                    .addOnFailureListener {
                         Toast.makeText(
                             requireContext(),
-                            "Error al guardar: ${e.message}",
+                            "Error al guardar datos",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
+            } else {
+                Toast.makeText(requireContext(), "Usuario no encontrado", Toast.LENGTH_SHORT).show()
             }
         } else {
-            Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                requireContext(),
+                "Por favor, complete todos los campos",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
     private fun validarCampos(): Boolean {
-        return editTextNombre.text.isNotBlank() &&
-                editTextEdad.text.isNotBlank() &&
-                editTextTalla.text.isNotBlank() &&
-                editTextPeso.text.isNotBlank() &&
-                editTextIMC.text.isNotBlank() &&
-                editTextTemperatura.text.isNotBlank() &&
-                editTextFrecuenciaRespiratoria.text.isNotBlank() &&
-                editTextFrecuenciaCardiaca.text.isNotBlank() &&
-                editTextTensionArterial.text.isNotBlank() &&
-                editTextTabaquismo.text.isNotBlank() &&
-                editTextAlcoholismo.text.isNotBlank() &&
-                editTextSedentarismo.text.isNotBlank() &&
-                editTextHabitosAlimenticios.text.isNotBlank() &&
-                editTextTipoDiabetes.text.isNotBlank() &&
-                editTextHipertensionArterial.text.isNotBlank() &&
-                editTextDislipidemia.text.isNotBlank() &&
-                editTextObesidad.text.isNotBlank() &&
-                editTextControlGlicemico.text.isNotBlank() &&
-                editTextManejoPieDiabetico.text.isNotBlank() &&
-                editTextControlComorbilidades.text.isNotBlank()
+        return !(editTextNombre.text.isNullOrEmpty() ||
+                editTextEdad.text.isNullOrEmpty() ||
+                editTextTalla.text.isNullOrEmpty() ||
+                editTextPeso.text.isNullOrEmpty() ||
+                editTextIMC.text.isNullOrEmpty() ||
+                editTextTemperatura.text.isNullOrEmpty() ||
+                editTextFrecuenciaRespiratoria.text.isNullOrEmpty() ||
+                editTextFrecuenciaCardiaca.text.isNullOrEmpty() ||
+                editTextTensionArterial.text.isNullOrEmpty() ||
+                editTextTabaquismo.text.isNullOrEmpty() ||
+                editTextAlcoholismo.text.isNullOrEmpty() ||
+                editTextSedentarismo.text.isNullOrEmpty() ||
+                editTextHabitosAlimenticios.text.isNullOrEmpty() ||
+                editTextTipoDiabetes.text.isNullOrEmpty() ||
+                editTextHipertensionArterial.text.isNullOrEmpty() ||
+                editTextDislipidemia.text.isNullOrEmpty() ||
+                editTextObesidad.text.isNullOrEmpty() ||
+                editTextControlGlicemico.text.isNullOrEmpty() ||
+                editTextManejoPieDiabetico.text.isNullOrEmpty() ||
+                editTextControlComorbilidades.text.isNullOrEmpty())
+    }
+
+    private fun habilitarCampos() {
+        editTextNombre.isEnabled = true
+        editTextEdad.isEnabled = true
+        editTextTalla.isEnabled = true
+        editTextPeso.isEnabled = true
+        editTextIMC.isEnabled = true
+        editTextTemperatura.isEnabled = true
+        editTextFrecuenciaRespiratoria.isEnabled = true
+        editTextFrecuenciaCardiaca.isEnabled = true
+        editTextTensionArterial.isEnabled = true
+        editTextTabaquismo.isEnabled = true
+        editTextAlcoholismo.isEnabled = true
+        editTextSedentarismo.isEnabled = true
+        editTextHabitosAlimenticios.isEnabled = true
+        editTextTipoDiabetes.isEnabled = true
+        editTextHipertensionArterial.isEnabled = true
+        editTextDislipidemia.isEnabled = true
+        editTextObesidad.isEnabled = true
+        editTextControlGlicemico.isEnabled = true
+        editTextManejoPieDiabetico.isEnabled = true
+        editTextControlComorbilidades.isEnabled = true
+        buttonGuardar.visibility = View.VISIBLE
+    }
+
+    private fun deshabilitarCampos() {
+        editTextNombre.isEnabled = false
+        editTextEdad.isEnabled = false
+        editTextTalla.isEnabled = false
+        editTextPeso.isEnabled = false
+        editTextIMC.isEnabled = false
+        editTextTemperatura.isEnabled = false
+        editTextFrecuenciaRespiratoria.isEnabled = false
+        editTextFrecuenciaCardiaca.isEnabled = false
+        editTextTensionArterial.isEnabled = false
+        editTextTabaquismo.isEnabled = false
+        editTextAlcoholismo.isEnabled = false
+        editTextSedentarismo.isEnabled = false
+        editTextHabitosAlimenticios.isEnabled = false
+        editTextTipoDiabetes.isEnabled = false
+        editTextHipertensionArterial.isEnabled = false
+        editTextDislipidemia.isEnabled = false
+        editTextObesidad.isEnabled = false
+        editTextControlGlicemico.isEnabled = false
+        editTextManejoPieDiabetico.isEnabled = false
+        editTextControlComorbilidades.isEnabled = false
+        buttonGuardar.visibility = View.INVISIBLE
     }
 
     private fun mostrarDialogoCreacion() {
         AlertDialog.Builder(requireContext())
             .setTitle("Crear Historial Clínico")
-            .setMessage("No se encontró un historial. ¿Deseas crear uno?")
-            .setPositiveButton("Crear") { _, _ ->
-                Toast.makeText(requireContext(), "Completa los datos para guardar", Toast.LENGTH_SHORT).show()
+            .setMessage("Debe crear el historial clínico para poder capturar fotografías.")
+            .setPositiveButton("Aceptar") { dialog, _ ->
+                dialog.dismiss()
             }
-            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+            .setCancelable(false)
             .show()
     }
 
     private fun mostrarDialogoFoto() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Foto de Perfil")
-            .setMessage("¿Deseas subir una foto de perfil?")
-            .setPositiveButton("Subir Foto") { _, _ ->
-                Toast.makeText(requireContext(), "Funcionalidad pendiente", Toast.LENGTH_SHORT).show()
+            .setTitle("Foto")
+            .setMessage("¿Deseas subir una foto?")
+            .setPositiveButton("Sí") { dialog, _ ->
+                dialog.dismiss()
+                tomarFotoConPermiso()
             }
-            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
             .show()
     }
 
-    private fun habilitarCampos() {
-        listOf(
-            editTextNombre, editTextEdad, editTextTalla, editTextPeso, editTextIMC,
-            editTextTemperatura, editTextFrecuenciaRespiratoria, editTextFrecuenciaCardiaca,
-            editTextTensionArterial, editTextTabaquismo, editTextAlcoholismo, editTextSedentarismo,
-            editTextHabitosAlimenticios, editTextTipoDiabetes, editTextHipertensionArterial,
-            editTextDislipidemia, editTextObesidad, editTextControlGlicemico,
-            editTextManejoPieDiabetico, editTextControlComorbilidades
-        ).forEach { it.isEnabled = true }
+    private fun tomarFotoConPermiso() {
+        // Llama a la función del Activity para pedir permiso y abrir cámara
+        (activity as? MainView)?.checkPermissionsAndOpenCamera()
     }
-
-    private fun deshabilitarCampos() {
-        listOf(
-            editTextNombre, editTextEdad, editTextTalla, editTextPeso, editTextIMC,
-            editTextTemperatura, editTextFrecuenciaRespiratoria, editTextFrecuenciaCardiaca,
-            editTextTensionArterial, editTextTabaquismo, editTextAlcoholismo, editTextSedentarismo,
-            editTextHabitosAlimenticios, editTextTipoDiabetes, editTextHipertensionArterial,
-            editTextDislipidemia, editTextObesidad, editTextControlGlicemico,
-            editTextManejoPieDiabetico, editTextControlComorbilidades
-        ).forEach { it.isEnabled = false }
-    }
-
 }

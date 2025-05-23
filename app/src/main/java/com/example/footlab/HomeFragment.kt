@@ -6,7 +6,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.example.tuapp.PerfilFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
@@ -33,7 +32,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 else -> null
             }
         }.attach()
+
+        viewPager.setCurrentItem(0, false)
+
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewPager.setCurrentItem(0, false)
+    }
+
 
     private inner class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
         override fun getItemCount(): Int = 2 // 3 tabs

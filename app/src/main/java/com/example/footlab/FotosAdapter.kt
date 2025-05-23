@@ -21,14 +21,12 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import org.tensorflow.lite.Interpreter
 import retrofit2.Response
 import com.example.footlab.RetrofitClient.apiService as apiService1
 
 class FotosAdapter(
     private val context: Context,
     private val fotosUrls: List<String>,
-    private val interpreter: Interpreter,
     private val onItemClick: (String) -> Unit
 ) : RecyclerView.Adapter<FotosAdapter.FotosViewHolder>() {
 

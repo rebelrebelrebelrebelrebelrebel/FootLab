@@ -6,32 +6,29 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 object FirebaseUtils {
 
-    fun cargarFotos(context: Context, username: String, callback: (List<String>) -> Unit) {
-        val campo = if (username.contains("@")) "Email" else "UserName"
+    fun cargarFotos(context: Context, callback: (List<String>) -> Unit) {
+        val sharedPreferences = context.getSharedPreferences("UserData", Context.MODE_PRIVATE)
+        val pacienteId = sharedPreferences.getString("PacienteID", null)
+
+        if (pacienteId == null) {
+            Toast.makeText(context, "Paciente no encontrado", Toast.LENGTH_SHORT).show()
+            callback(emptyList())
+            return
+        }
+
         val db = FirebaseFirestore.getInstance()
-
-        // La carga se realiza aquí solo cuando el usuario lo solicita explícitamente.
-        db.collection("Pacientes").whereEqualTo(campo, username).get()
-            .addOnSuccessListener { querySnapshot ->
-                if (querySnapshot.documents.isNotEmpty()) {
-                    val fotosField = querySnapshot.documents.first().get("Fotos")
-
-                    val fotosUrls = when (fotosField) {
-                        is ArrayList<*> -> {
-                            fotosField.filterIsInstance<HashMap<String, *>>()
-                                .mapNotNull { it["URL"] as? String }
-                        }
-                        is List<*> -> {
-                            fotosField.filterIsInstance<String>()
-                        }
-                        else -> {
-                            Toast.makeText(context, "Formato de fotos no compatible", Toast.LENGTH_SHORT).show()
-                            emptyList()
-                        }
+        db.collection("Pacientes")
+            .document(pacienteId)
+            .collection("Imagenes")
+            .get()
+            .addOnSuccessListener { imagesSnapshot ->
+                if (imagesSnapshot.documents.isNotEmpty()) {
+                    val fotosUrls = imagesSnapshot.documents.mapNotNull { doc ->
+                        doc.getString("URL")
                     }
                     callback(fotosUrls)
                 } else {
-                    Toast.makeText(context, "No hay fotos disponibles", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "No hay fotos en Imagenes", Toast.LENGTH_SHORT).show()
                     callback(emptyList())
                 }
             }

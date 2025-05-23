@@ -1,4 +1,4 @@
-package com.example.tuapp
+package com.example.footlab
 
 import android.content.SharedPreferences
 import android.icu.text.SimpleDateFormat
@@ -10,7 +10,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import com.example.footlab.R
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.Locale
@@ -51,7 +50,7 @@ class PerfilFragment : Fragment() {
 
         // Verifica si el pacienteId está disponible
         if (pacienteId != null) {
-            pacientesRef = db.collection("pacientes").document(pacienteId!!).collection("Credenciales")
+            pacientesRef = db.collection("Pacientes").document(pacienteId!!).collection("Credenciales")
         }
 
         // Ocultar información por defecto
@@ -94,8 +93,8 @@ class PerfilFragment : Fragment() {
                     val nombre = documentSnapshot.getString("Nombre")
                     val edad = documentSnapshot.getDouble("Edad")?.toInt()
                     val fechaRegistroTimestamp = documentSnapshot.getTimestamp("Fecha de Registro")
-                    val medico = documentSnapshot.getString("Médico")
-                    val diagnostico = documentSnapshot.getString("Diagnóstico")
+                    val medico = documentSnapshot.getString("Medico")
+                    val diagnostico = documentSnapshot.getString("Diagnostico")
 
                     // Formatear la fecha de registro
                     fechaRegistroTimestamp?.let {

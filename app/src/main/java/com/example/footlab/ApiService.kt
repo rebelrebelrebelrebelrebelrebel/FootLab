@@ -31,7 +31,7 @@ interface ApiService {
 
 // Rename the Retrofit client object to avoid redeclaration
 object ApiClient {
-    private const val BASE_URL = "https://7c70-2806-2f0-9181-8aa8-4432-551c-94dd-e92d.ngrok-free.app/"
+        private const val BASE_URL = "https://7c70-2806-2f0-9181-8aa8-4432-551c-94dd-e92d.ngrok-free.app/"
 
     private val logging = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
